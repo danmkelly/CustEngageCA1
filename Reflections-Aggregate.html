@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflections Aggregate: End-to-End Weakness Analysis and Failure Dossier</title>
+<style>
+  :root {
+    --bg: #f8f9fa; --card: #ffffff; --text: #1a1a2e; --muted: #6c757d;
+    --accent: #6c3483; --accent-light: #f5eef8; --border: #dee2e6;
+    --warn: #856404; --warn-bg: #fffbe6;
+    --fail: #721c24; --fail-bg: #f8d7da;
+    --critical: #c0392b; --critical-bg: #fdedec;
+    --high: #e67e22; --high-bg: #fef5e7;
+    --medium: #f1c40f; --medium-bg: #fef9e7;
+    --muted-bg: #f0f4f8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; padding: 2rem 1rem; }
+  .container { max-width: 900px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #2d0a3d 0%, #6c3483 50%, #8e44ad 100%); color: #ffffff; padding: 2.5rem 2rem; border-radius: 12px; margin-bottom: 2rem; }
+  header .eyebrow { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; margin-bottom: 0.5rem; }
+  header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; }
+  header .sub { font-size: 1rem; opacity: 0.85; line-height: 1.5; }
+  header .meta { margin-top: 1rem; font-size: 0.85rem; opacity: 0.7; }
+  section { background: var(--card); border-radius: 10px; padding: 2rem; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+  section h2 { font-size: 1.15rem; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent-light); }
+  section h3 { font-size: 1rem; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #333; }
+  section h4 { font-size: 0.9rem; margin-top: 1rem; margin-bottom: 0.35rem; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+  blockquote { background: var(--muted-bg); border-left: 4px solid var(--accent); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 8px 8px 0; font-style: italic; color: #555; }
+  table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.85rem; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: #f1f3f5; font-weight: 600; color: #495057; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+  li { margin-bottom: 0.35rem; }
+  .weakness-card { border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin: 1.25rem 0; background: #fafbfc; }
+  .weakness-card .severity { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+  .severity-critical { background: var(--critical-bg); color: var(--critical); }
+  .severity-high { background: var(--high-bg); color: var(--high); }
+  .severity-medium { background: var(--medium-bg); color: #7d6608; }
+  .weakness-card h3 { margin-top: 0; color: #333; }
+  .weakness-card .instances { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed var(--border); }
+  .weakness-card .instances h4 { margin-top: 0; font-size: 0.8rem; color: var(--muted); }
+  .dossier-box { background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); border: 2px solid var(--accent); border-radius: 10px; padding: 2rem; margin: 1.5rem 0; }
+  .dossier-box h2 { color: var(--accent); border-bottom-color: var(--accent-light); }
+  .chain-diagram { background: #f8f9fa; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; text-align: center; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.85rem; line-height: 1.8; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  @media (max-width: 700px) { body { padding: 1rem 0.5rem; } section { padding: 1.25rem; } header { padding: 1.5rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="eyebrow">Cross-Agent Meta-Analysis</div>
+  <h1>Reflections Aggregate: End-to-End Weakness Analysis</h1>
+  <div class="sub">A systematic review of critical weaknesses across the three-agent pipeline (Researcher, Designer, Communicator), organised by class rather than instance, with proposed text for Task 4: Failure Dossier.</div>
+  <div class="meta">Produced: 24 June 2026 | Scope: Full pipeline (HO-01, HO-02, HO-03) plus all three Reflections documents</div>
+</header>
+
+<!-- ===== PIPELINE OVERVIEW ===== -->
+<section>
+  <h2>Pipeline Architecture Reviewed</h2>
+  <p>The three-agent pipeline operated as a sequential handoff:</p>
+
+  <div class="chain-diagram">
+    Task 1 Document (single source of CloudNine data)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&darr;<br>
+    <strong>Researcher</strong> (HO-01: Trust Landscape Audit)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&darr;<br>
+    <strong>Designer</strong> (HO-02: Intervention Design Specs)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&darr;<br>
+    <strong>Communicator</strong> (HO-03: Final Report + Copy Specs)
+  </div>
+
+  <p>Each agent accepted the prior agent's output as ground truth and built on it. No verification step existed at any handoff boundary. No agent challenged the brief itself. Each agent flagged its own assumptions but passed them forward unverified.</p>
+</section>
+
+<!-- ===== WEAKNESS CLASSES ===== -->
+<section>
+  <h2>Critical Weaknesses by Class</h2>
+  <p>The following weaknesses are structural: they arise from the design of the pipeline itself, not from errors made by individual agents. Each class is documented with its mechanism, concrete instances from the pipeline, and severity.</p>
+
+  <!-- Class 1 -->
+  <div class="weakness-card">
+    <span class="severity severity-critical">Critical</span>
+    <h3>Class 1: Cascading Assumptions on Hypothetical Data</h3>
+    <p><strong>Mechanism:</strong> The entire pipeline rests on data that was never verified against CloudNine's actual systems. The Task 1 document provides business metrics (4M passengers, 800K loyalty members, 15% active) and challenge descriptions (opaque ancillary practices, low AI confidence), but no screen-level evidence, no system access, and no customer data. Each agent built inferences on top of the prior agent's inferences. An error at any layer propagates forward and compounds. The pipeline has no mechanism to halt, verify, or loop back.</p>
+    <p><strong>Why this class matters:</strong> The output looks rigorous (frameworks, tables, recommendations, copy) but the foundation is soft. A single wrong assumption about CloudNine's loyalty earning rate would invalidate an entire section of the Communicator's copy. A wrong assumption about dark-pattern presence in the booking flow would mean the Designer solved a problem that does not exist while missing one that does. The cascade is:</p>
+    <ol>
+      <li>Researcher infers dark patterns from industry norms &rarr; Designer designs against those inferred patterns &rarr; Communicator writes copy assuming those patterns exist and must be removed.</li>
+      <li>Researcher assumes loyalty programme is structurally simple &rarr; Designer specifies a three-card dashboard for a simple programme &rarr; Communicator writes copy at a simplicity level the real programme may not support.</li>
+      <li>Researcher classifies AI systems as limited risk under EU AI Act &rarr; Designer specifies Article 50 disclosure &rarr; Communicator writes disclosure copy. If the tier is wrong, the duty is wrong, and the copy is legally insufficient.</li>
+    </ol>
+
+    <div class="instances">
+      <h4>Concrete Instances Across the Pipeline</h4>
+      <ul>
+        <li><strong>HO-01:</strong> Dark-pattern table assigns High/Medium likelihood ratings to 5 Brignull patterns without screen-level audit. (Researcher Error Flag 1)</li>
+        <li><strong>HO-01:</strong> All three trust dimension assessments use the 15% active rate as a proxy for benevolence failure. If the rate is driven by a different cause, the entire diagnosis shifts. (Researcher Error Flag 4)</li>
+        <li><strong>HO-02:</strong> Designer assumes CloudNine's booking system supports a mobile-responsive three-column layout with a persistent price bar. (Designer Assumption)</li>
+        <li><strong>HO-02:</strong> Designer assumes the loyalty backend can serve real-time balances, expiry dates, and tier progress. If not, the dashboard is technically infeasible. (Designer Assumption)</li>
+        <li><strong>HO-03:</strong> Communicator writes "You earn 1 point for every EUR 1 you spend" as a specific, disprovable claim. If CloudNine's actual rate is different or varies by fare class, the copy is false. (Communicator Assumption 1)</li>
+        <li><strong>HO-03:</strong> Communicator writes pricing disclosure naming three factors (route, timing, demand). If CloudNine's model uses additional factors, the disclosure is incomplete. (Communicator Assumption 5)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Class 2 -->
+  <div class="weakness-card">
+    <span class="severity severity-critical">Critical</span>
+    <h3>Class 2: Single-Source Dependency with No Source Challenge</h3>
+    <p><strong>Mechanism:</strong> All three agents treated the Task 1 strategic diagnosis document as complete, accurate, and sufficient. No agent asked whether the three named challenges are the correct three challenges. No agent questioned whether the metrics (15% active, ancillary below average) are accurate, current, or correctly defined. No agent asked whether the document omitted relevant information (e.g. segmentation data, regional variation, competitive context). The brief became the ground truth by default, not by verification.</p>
+    <p><strong>Why this class matters:</strong> If the Task 1 document contains errors, omissions, or framing biases, the entire pipeline output is downstream of those errors. A strategic diagnosis that misidentifies causes (e.g. attributes low loyalty activity to trust when the real cause is a poor join incentive) would lead the pipeline to recommend trust interventions for a non-trust problem. The three agents are collectively a powerful reasoning engine aimed at a potentially wrong target.</p>
+
+    <div class="instances">
+      <h4>Concrete Instances Across the Pipeline</h4>
+      <ul>
+        <li><strong>HO-01:</strong> Researcher acknowledges "if the document itself contains errors, my audit would amplify those errors" but does not challenge the brief. (Researcher Error Flag 5)</li>
+        <li><strong>HO-02:</strong> Designer treats the Researcher's priority sequence as authoritative without questioning whether the ancillary flow should truly be Priority 1 given the interdependency analysis.</li>
+        <li><strong>HO-03:</strong> Communicator does not question whether the three challenges represent the full trust landscape or whether additional challenges (e.g. post-booking service, complaint handling, refund processes) are equally or more important.</li>
+        <li><strong>None of the three agents:</strong> Requested competitor data, customer survey results, or operational metrics beyond what the Task 1 document provided. The pipeline accepted data scarcity as a constraint rather than a gap to close.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Class 3 -->
+  <div class="weakness-card">
+    <span class="severity severity-high">High</span>
+    <h3>Class 3: No Verification Gates or Feedback Loops</h3>
+    <p><strong>Mechanism:</strong> The pipeline was designed as a one-way sequential flow: Researcher &rarr; Designer &rarr; Communicator. Each agent flagged data gaps and assumptions in its own Reflections document, but those flags were not routed back to earlier agents. There was no mechanism for the Designer to say "I cannot design this until the Researcher verifies the dark-pattern assumptions." There was no mechanism for the Communicator to say "I cannot write copy for a loyalty programme whose actual structure I do not know." Each agent proceeded on assumptions rather than pausing and requesting verification. The human orchestrator was intended to manage these gates but did not intervene.</p>
+    <p><strong>Why this class matters:</strong> The output is complete but its completeness is deceptive. A reader encountering the HO-03 Final Report sees a finished document with specific copy, implementation timelines, and business cases. They do not see the chain of unverified assumptions beneath it unless they read all three Reflections documents. The pipeline produced output efficiently but did not produce verifiable output. In a production environment, this pipeline would ship recommendations whose accuracy is unknown.</p>
+
+    <div class="instances">
+      <h4>Concrete Instances Across the Pipeline</h4>
+      <ul>
+        <li><strong>Researcher to Designer:</strong> Five open data gaps flagged in HO-01. Designer acknowledged them ("I inherit these gaps") and proceeded. No gap was closed before design began.</li>
+        <li><strong>Designer to Communicator:</strong> Designer Error Flag 1 warns that dark patterns are inferred, not confirmed. Communicator acknowledges this as Concern 5 ("I cannot audit what I cannot see") and proceeds. No verification occurred.</li>
+        <li><strong>Communicator to Final Report:</strong> Communicator flags 8 assumptions as unverified, marks 4 as critical path, and recommends a Phase 1 screen-level audit. But the audit is downstream of the report: the recommendations were made before the verification.</li>
+        <li><strong>No agent:</strong> Triggered the Researcher's "escalates when" boundary condition (data sources contradict, fundamental assumption proves wrong). The escalation mechanism existed in the persona spec but was never invoked because each agent accepted the prior output.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Class 4 -->
+  <div class="weakness-card">
+    <span class="severity severity-high">High</span>
+    <h3>Class 4: Academic Framework Overfit on Thin Evidence</h3>
+    <p><strong>Mechanism:</strong> The pipeline applied a dense stack of academic frameworks (Mayer-Davis-Schoorman trust construct, Lee and See calibration, Burrell opacity, DART co-creation, Floridi and Cowls five principles, Jobin et al. global ethics landscape, Barocas and Selbst bias pipeline, Brignull dark patterns, Gray et al. dark-pattern strategies, Fogg B=MAP, Cialdini persuasion principles, EU AI Act risk tiers, Coeckelbergh AI ethics, Daugherty and Wilson collaborative intelligence, AI disclosure design pattern) to a slim evidence base consisting of one strategic diagnosis document and a set of lecture PDFs. The frameworks added diagnostic vocabulary and structured the output, but they also created an illusion of analytical depth: tables of trust dimensions, calibration states, opacity types, and DART assessments look like rigorous analysis regardless of whether the underlying data supports the classification.</p>
+    <p><strong>Why this class matters:</strong> A reader unfamiliar with the evidence base may be persuaded by the framework application rather than by the evidence. The pipeline's output reads like a consulting deliverable because the academic frameworks provide a consulting-deliverable structure. But the substance behind each framework application (e.g. "benevolence is FAILING" on the loyalty programme) rests on a single proxy metric (15% active rate). The framework amplifies the signal; it does not validate it.</p>
+
+    <div class="instances">
+      <h4>Concrete Instances Across the Pipeline</h4>
+      <ul>
+        <li><strong>HO-01:</strong> Every trust dimension assessment uses the same four data points (15% active rate, ancillary below average, chatbot escalation complaints, pricing confusion). These are reapplied across multiple frameworks, creating an impression of converging evidence from a single source.</li>
+        <li><strong>HO-01:</strong> The DART framework assessment returns "FAILING" or "Absent" on nearly every pillar for every challenge. A framework that returns maximum failure on nearly every cell may be fit to the data rather than genuinely discriminating between challenges.</li>
+        <li><strong>HO-02:</strong> The Designer's "Trust Contract" table (trust dimension, calibration move, dark patterns removed, Fogg factors, ethical edge check) is applied uniformly to all three designs. The structure is consistent, but the content for Designs 2 and 3 is thinner and more speculative because the evidence base thins as the pipeline moves from direct revenue impact (Design 1) to structural trust impact (Design 3).</li>
+        <li><strong>HO-03:</strong> The Communicator's quality-standards self-audit table scores representative slots against all five standards. The table demonstrates process rigour, but the "Conditional" pass on the chatbot greeting is the only non-Pass score. A framework designed to catch failures caught one. This may indicate the framework is working, or it may indicate the self-audit was lenient.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Class 5 -->
+  <div class="weakness-card">
+    <span class="severity severity-high">High</span>
+    <h3>Class 5: Hallucination and Fabrication Risk in LLM-Generated Pipeline Output</h3>
+    <p><strong>Mechanism:</strong> All three agents were instantiated as LLM personas. Each agent produced output that includes specific claims, statistics, and "evidence" (e.g. the Designer's career-arc examples: "the two airlines with the highest ancillary revenue per passenger shared one trait: transparent fee disclosure"; "active redemption rates rose 22% in the first quarter after launch"; "the framework reduced pricing-related complaints by 31%"). These claims are presented as evidence from the agent's "designed composite" experience. But they were generated by the LLM, not sourced from real research. The "designed composite" framing in each agent's Bio section discloses that the experience is synthetic, but the output sections (Career Arc, Recommendations, copy rationale) present the claims without caveats.</p>
+    <p><strong>Why this class matters:</strong> The line between "designed composite" (a plausible synthesis of real patterns) and "fabrication" (a specific claim presented as fact) is blurred throughout the pipeline. The 22% redemption-rate increase cited by the Designer is drawn from the agent's synthetic career arc, not from a verifiable study. The 14% repeat-booking uplift from transparent vs. dark-pattern flows is similarly synthetic. The Communicator amplifies these by citing them in business-case sections ("Industry evidence from European low-cost carriers shows..."). The pipeline's "sources or it did not happen" belief (Researcher) and "true/disprovable/useful" test (Communicator) are applied to the CloudNine-specific copy but not to the pipeline's own supporting claims.</p>
+
+    <div class="instances">
+      <h4>Concrete Instances Across the Pipeline</h4>
+      <ul>
+        <li><strong>HO-01:</strong> The Researcher's Career Arc includes a "Defining moment" about a 12-carrier comparative analysis. The specific finding ("the two with the highest ancillary revenue per passenger shared one trait") is presented as evidence but has no verifiable source. It is synthetic backstory, not research.</li>
+        <li><strong>HO-01:</strong> The Researcher's second Career Arc "Defining moment" cites a specific 18% redemption increase from a regional airline audit. No source. Synthetic backstory.</li>
+        <li><strong>HO-02:</strong> The Designer's Career Arc cites a 14% repeat-booking uplift and a 22% redemption-rate increase from unspecified "career experience." No source. Synthetic backstory.</li>
+        <li><strong>HO-03:</strong> The Communicator's business-case sections cite "industry evidence" and "evidence from European low-cost carriers" that is drawn from the Researcher's and Designer's synthetic career arcs, not from independent verification. The business case rests on career-arc "data" that was generated by the same LLM pipeline.</li>
+        <li><strong>HO-03:</strong> The Communicator's "Expected Business Results" sections include specific numeric projections (5-10% ancillary dip, 14% repeat booking uplift, 22% redemption increase, 31% complaint reduction). These numbers trace back to the Designer's and Researcher's synthetic career arcs. None of them are sourced from CloudNine data or independent research.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Class 6 -->
+  <div class="weakness-card">
+    <span class="severity severity-high">High</span>
+    <h3>Class 6: The Human Orchestrator Did Not Orchestrate</h3>
+    <p><strong>Mechanism:</strong> The Task 2 document specifies that "orchestration is performed manually by me (the human)" and that "this allows full visibility into each agent's behaviour, including errors, hallucinations, and broken handoffs." In practice, the human orchestrator issued sequential prompts (proceed, proceed, proceed) without intervening at any handoff boundary. The five open data gaps from HO-01 were not closed before HO-02 began. The Designer's request for direction on whether to proceed with assumptions or pause for verification was answered with "proceed without closure." The Communicator's concerns about unverifiable claims were similarly waived through. The orchestrator enabled the pipeline's forward momentum but did not exercise the quality-gate function that the Manager archetype exists to perform.</p>
+    <p><strong>Why this class matters:</strong> The pipeline was designed to produce failure. "Build, then distrust" (Week 4 V4) and the Task 4 Failure Dossier both assume that agent errors, hallucinations, and broken handoffs will be visible and documentable. But the orchestration pattern (prompt-and-proceed) means that failures were noted in Reflections documents rather than caught and corrected in real time. The pipeline produced its output, and the output is now the subject of a failure analysis. But the failures were avoidable: a single verification step at any handoff boundary would have changed the output. The orchestrator chose velocity over verification, and the Failure Dossier is the downstream consequence of that choice.</p>
+
+    <div class="instances">
+      <h4>Concrete Instances Across the Pipeline</h4>
+      <ul>
+        <li><strong>Handoff 1 (Researcher &rarr; Designer):</strong> The Designer escalated: "Do you want me to proceed with assumptions (marked), or pause and request that the Researcher close these gaps first?" Response: "Proceed without closure." The gate was opened, not held.</li>
+        <li><strong>Handoff 2 (Designer &rarr; Communicator):</strong> The Communicator raised five concerns, including inability to verify claims and the chatbot greeting length risk. Response: "Proceed without closure on your concerns." The gate was opened again.</li>
+        <li><strong>No handoff:</strong> Included a request for independent verification. The orchestrator did not commission the Researcher's Competitive Trust Benchmark, did not request the Communicator's Communication Ethics Audit, and did not request screen-level verification of dark patterns.</li>
+        <li><strong>No handoff:</strong> Directed an agent to return to a prior agent with a clarification request. The one-way architecture was never tested with a two-way query.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Class 7 -->
+  <div class="weakness-card">
+    <span class="severity severity-medium">Medium</span>
+    <h3>Class 7: Absence of Measurement and Evaluation Instrumentation</h3>
+    <p><strong>Mechanism:</strong> The Researcher archetype's Evaluate mode requires signal data to assess whether an intervention is working, and the default rule is "7 or more days with zero measurable signal means recommend KILL." However, none of the three design specifications include measurement instrumentation. The ancillary flow redesign does not specify what data to log (conversion per option, time on screen, abandonment). The loyalty dashboard does not specify what engagement metrics to track (card expand rate, redemption click-through, notification engagement). The AI disclosure system does not specify what trust signals to measure (chatbot escalation rate, pricing complaint volume, disclosure-page views). Without instrumentation, the Researcher cannot evaluate the interventions it recommended, and the kill/pivot/scale rule cannot be applied.</p>
+    <p><strong>Why this class matters:</strong> The pipeline produced a set of recommendations but did not produce a way to know whether they worked. This is a category error in the pipeline's design: the Researcher's role includes evaluation, but the pipeline's sequential architecture separates research (HO-01) from design (HO-02) from copy (HO-03) with no loop back to evaluation. The Designer acknowledged this as Error Flag 6 ("no specification for A/B testing or measurement"). The Communicator's Implementation Roadmap includes success measures at the phase level (e.g. "statistically significant signal on ancillary revenue per passenger"), but does not specify the instrumentation needed to collect those measures.</p>
+
+    <div class="instances">
+      <h4>Concrete Instances Across the Pipeline</h4>
+      <ul>
+        <li><strong>HO-01:</strong> The Researcher's Signal Evaluation Report skill is defined but never invoked. The pipeline produced recommendations but no evaluation framework.</li>
+        <li><strong>HO-02:</strong> Designer Error Flag 6: "I did not include measurement plans...this is an oversight in my handoff."</li>
+        <li><strong>HO-03:</strong> Implementation Roadmap Phase 2 specifies "A/B test the transparent ancillary flow on 10% of traffic" with success measures, but does not specify the event logging, analytics instrumentation, or statistical methodology needed to run the test.</li>
+        <li><strong>HO-03:</strong> The Communicator's "Expected Business Results" sections include specific numeric projections without measurement methodology. "Expect 20-30% of inactive members to open the dashboard" is a testable claim with no test design.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Class 8 -->
+  <div class="weakness-card">
+    <span class="severity severity-medium">Medium</span>
+    <h3>Class 8: Role Scope Creep and Boundary Blur</h3>
+    <p><strong>Mechanism:</strong> Each agent's persona spec defines clear boundaries. The Researcher "stays in intelligence; no design, no build, no marketing." The Designer "produces specifications; no code, no copy, no strategy." The Communicator "works with words; no code, no design, no pricing." In practice, these boundaries softened. The Communicator's Final Report includes an Implementation Roadmap (planning), Options Not Pursued (strategy), and Expected Business Results (forecasting). These are Manager-adjacent activities. The Designer specified system connections between interventions (system synthesis), which borders on architecture that overlaps with the Maker's domain. The Researcher's Synthesis section identified a causal loop, which is an analytical move that crosses into strategic recommendation.</p>
+    <p><strong>Why this class matters:</strong> The five-innovators spec is explicit that "scopes are deliberately non-overlapping so the team does not collide." When boundaries blur, accountability blurs. If the Implementation Roadmap is wrong, does the Communicator own the error, or does the missing Manager? If the system synthesis over-integrates the three designs, does the Designer own the error, or does the missing Maker? The pipeline was designed as three specialists with no Manager. Boundary blur was the likely outcome of a Manager-less team, and it occurred.</p>
+
+    <div class="instances">
+      <h4>Concrete Instances Across the Pipeline</h4>
+      <ul>
+        <li><strong>HO-01 Researcher:</strong> The Synthesis section's "self-reinforcing trust deficit loop" and "Breaking the Loop: Leverage Point Analysis" are diagnostic framing that edges into strategic recommendation (which levers to pull, in which order). This is Manager-adjacent work.</li>
+        <li><strong>HO-02 Designer:</strong> The "System Synthesis: How the Three Designs Connect" section specifies technical integrations (shared data layer, consistent language register, single source of truth). This edges into Maker-adjacent architecture.</li>
+        <li><strong>HO-03 Communicator:</strong> The Implementation Roadmap assigns owners (Product, Engineering, Loyalty, Legal), specifies timelines (phases across 16+ weeks), and names success measures. This is Manager work: planning, delegation, quality gates.</li>
+        <li><strong>HO-03 Communicator:</strong> The Options Not Pursued section makes strategic choices (reject price cuts, reject mandatory personalisation, reject standalone implementation). Strategy decisions "stay with you" per the Designer's boundary, but the Communicator is evaluating and rejecting strategic alternatives.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Class 9 -->
+  <div class="weakness-card">
+    <span class="severity severity-medium">Medium</span>
+    <h3>Class 9: The Dual-Audience Final Report Problem</h3>
+    <p><strong>Mechanism:</strong> The HO-03 Final Report serves two audiences with conflicting needs: (1) a CEO who wants crisp recommendations, business results, and clear rationale, and (2) an implementation team that needs detailed copy specifications, rationale notes, and design context. These audiences need different documents. The CEO-facing Executive Summary and Recommendations sections are written in business language with impact timelines. The Detailed Copy Specifications section is written in implementation language with slot-level rationale. The document's length (approximately 60KB of HTML) means the CEO is unlikely to reach the implementation detail, and the implementation team must scroll past the CEO framing to find their work. Neither audience is optimally served by a single document that tries to be both.</p>
+    <p><strong>Why this class matters:</strong> The user requested a Final Report for "business leadership" but also required that all COMMUNICATOR COPY slots be filled. These are two separate deliverables: a decision document and an implementation pack. Combining them into one file merges audiences, dilutes focus, and creates a document that is long enough to discourage full reading. The CEO sections reference "detailed copy" that the document itself contains, creating a circular structure where the summary points at a section most CEOs will not reach.</p>
+
+    <div class="instances">
+      <h4>Concrete Instances Across the Pipeline</h4>
+      <ul>
+        <li><strong>HO-03 structure:</strong> The CEO sections (Executive Summary, three Recommendations, Options Not Pursued, Implementation Roadmap) occupy the first half. The implementation sections (Detailed Copy Specifications, AI Disclosure Statement, Assumptions) occupy the second half. The transition is marked by a horizontal rule, not by audience separation. A reader experiences both as one document.</li>
+        <li><strong>HO-03:</strong> The Communicator's Reflections document notes that the copy slots serve implementation, not leadership. But the output file does not separate them.</li>
+        <li><strong>HO-03:</strong> The AI Disclosure Statement section is positioned after the Detailed Copy Specifications, meaning a leader who stops reading after the Implementation Roadmap misses the statement about how the report was produced. The disclosure is buried.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WEAKNESS SUMMARY TABLE ===== -->
+<section>
+  <h2>Weakness Summary by Severity</h2>
+  <table>
+    <thead><tr><th>Class</th><th>Weakness</th><th>Severity</th><th>Preventable?</th><th>Prevention Mechanism</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Cascading assumptions on hypothetical data</td>
+        <td><span class="severity severity-critical">Critical</span></td>
+        <td>Partially</td>
+        <td>Screen-level audit before design phase; independent data access for each agent; verification gate at every handoff</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Single-source dependency with no source challenge</td>
+        <td><span class="severity severity-critical">Critical</span></td>
+        <td>Yes</td>
+        <td>Researcher brief-challenge step; competitive benchmark; independent customer data request; multi-source triangulation</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>No verification gates or feedback loops</td>
+        <td><span class="severity severity-high">High</span></td>
+        <td>Yes</td>
+        <td>Manager-enforced quality gates; two-way handoff protocol; escalate-and-pause triggers at each handoff boundary</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Academic framework overfit on thin evidence</td>
+        <td><span class="severity severity-high">High</span></td>
+        <td>Partially</td>
+        <td>Framework triage (apply only the frameworks the evidence supports); explicit evidence-to-framework traceability; reject framework applications where data is insufficient</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Hallucination and fabrication risk</td>
+        <td><span class="severity severity-high">High</span></td>
+        <td>Partially</td>
+        <td>Source-every-claim rule enforced at output level (not just persona-belief level); strip synthetic career-arc "data" from business-case sections; label all synthetic claims explicitly</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Human orchestrator did not orchestrate</td>
+        <td><span class="severity severity-high">High</span></td>
+        <td>Yes</td>
+        <td>Manager persona active in pipeline; quality-gate checklist at each handoff; explicit "pause and verify" triggers for data gaps</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Absence of measurement instrumentation</td>
+        <td><span class="severity severity-medium">Medium</span></td>
+        <td>Yes</td>
+        <td>Measurement spec as a required section in every design handoff; Researcher Evaluate-mode invocation after implementation</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Role scope creep and boundary blur</td>
+        <td><span class="severity severity-medium">Medium</span></td>
+        <td>Partially</td>
+        <td>Manager persona as gatekeeper of scope boundaries; explicit boundary check at each handoff; redirect boundary-crossing work to the correct agent</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Dual-audience Final Report problem</td>
+        <td><span class="severity severity-medium">Medium</span></td>
+        <td>Yes</td>
+        <td>Separate decision document from implementation pack; CEO summary as standalone deliverable; copy specs as appendices or separate files</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== TASK 4: FAILURE DOSSIER ===== -->
+<section>
+  <div class="dossier-box">
+    <h2>Task 4: Failure Dossier</h2>
+    <p><em>Proposed text for the CA1 Failure Dossier submission. This text can be used directly or adapted.</em></p>
+
+    <hr>
+
+    <h3>Failure Dossier: Three-Agent Trust and Transparency Pipeline for CloudNine Airlines</h3>
+
+    <h4>1. Pipeline Architecture and Intended Function</h4>
+    <p>The pipeline deployed three AI agents (Researcher, Designer, Communicator) against the DeepSeek V4 Pro LLM via OpenCode. The Researcher produced a Trust Landscape Audit (HO-01) mapping CloudNine Airlines' three trust and transparency challenges against the Mayer-Davis-Schoorman trust construct, Lee and See calibration framework, Burrell opacity types, the DART co-creation framework, and the Barocas and Selbst bias pipeline. The Designer converted this into three intervention specifications (HO-02): a transparent ancillary purchase flow, a three-card loyalty dashboard, and an AI disclosure system. The Communicator filled all copy slots and produced a business-leadership Final Report (HO-03) with recommendations, options not pursued, and an implementation roadmap. Each agent also produced a Reflections document documenting its thought process, data sources, tough decisions, and error flags.</p>
+
+    <h4>2. Taxonomy of Failures Observed</h4>
+
+    <p><strong>Failure Class A: Cascading Assumptions on Unverified Data.</strong> All three agents worked from a single primary data source (the Task 1 strategic diagnosis). No agent had access to CloudNine's actual booking flow, loyalty programme backend, AI systems, pricing models, customer data, or competitive intelligence. Every trust-dimension assessment, dark-pattern identification, design specification, and piece of customer-facing copy was built on inferences from industry patterns, not on verified CloudNine data. The Researcher inferred dark patterns from budget-airline norms. The Designer designed against those inferred patterns. The Communicator wrote copy assuming the patterns existed. An error at any layer would have propagated forward and compounded. The pipeline produced 19,000 words of output that looked rigorous but rested on unverified foundations.</p>
+
+    <p><strong>Failure Class B: Synthetic "Evidence" Presented as Fact.</strong> All three agents included career-arc "defining moments" that presented specific statistics (22% redemption increase, 14% repeat booking uplift, 31% complaint reduction, 18% redemption increase from expiry warnings) as evidence from the agent's designed-composite experience. These statistics were generated by the LLM during persona creation, not sourced from verifiable research. The Communicator then cited these statistics in business-case sections ("Industry evidence from European low-cost carriers shows..."), creating a chain where LLM-generated backstory became cited business evidence. The pipeline's own belief statements ("sources or it did not happen," "true, disprovable, useful") were not applied to the pipeline's supporting claims.</p>
+
+    <p><strong>Failure Class C: Structural Absence of Verification.</strong> The pipeline was architected as a one-way sequential chain with no feedback loops and no verification gates. Each agent flagged data gaps and assumptions in its Reflections document, but no gap was closed before the next agent began work. The Researcher flagged five open data gaps. The Designer inherited them and proceeded. The Communicator flagged eight unverifiable assumptions and proceeded. The human orchestrator did not intervene at any handoff boundary to close a gap, request verification, or commission additional research. The escalation mechanisms designed into each agent's persona (Researcher: "escalates when data sources contradict or a fundamental assumption proves wrong"; Designer: "escalates when user research is missing") were never triggered because each agent accepted the prior output as ground truth.</p>
+
+    <p><strong>Failure Class D: Manager-Less Architecture.</strong> The Task 2 document specified manual orchestration by the human, with the Manager archetype intentionally excluded "because this CA is a one-off analytical and design exercise." In practice, the absence of a Manager agent resulted in: (a) no quality gates at handoff boundaries, (b) no synthesis step that reconciled agent outputs, (c) no mechanism to redirect boundary-crossing work, and (d) no decision authority to pause the pipeline when data was insufficient. The three agents collectively produced Manager-adjacent work (synthesis, strategic evaluation of alternatives, implementation planning, owner assignment) without a Manager to coordinate it. The human's sequential "proceed" prompts enabled velocity but did not provide orchestration.</p>
+
+    <p><strong>Failure Class E: Framework Overfit.</strong> The pipeline applied ten academic frameworks to a slim evidence base. The framework applications produced structured, professional-looking output (dimension tables, calibration assessments, DART audits, ethical edge checks), but the underlying data for each assessment was the same small set of proxy metrics (15% loyalty active rate, ancillary below average, chatbot escalation complaints, pricing confusion). The frameworks created the appearance of converging evidence from multiple analytical perspectives when in fact a single data source was being re-expressed through different frameworks. This is an overfit pattern: the analytical machinery was proportional to the evidence that would be available in a full consulting engagement, not to the evidence actually available to this pipeline.</p>
+
+    <p><strong>Failure Class F: Hallucination Risk in Agent Persona Biographies.</strong> Each agent persona includes an Origin Story and Career Arc that establish credibility through specific, vivid scenarios (a Q3 strategy review; a 12-carrier comparative analysis; a budget airline that redesigned its booking flow; a European carrier whose loyalty emails drove a 24% click-through rate followed by a tripling of complaints). These stories are engaging and persuasive. They also have no factual basis. They were generated by the LLM during persona creation to give the agent a believable professional identity. The stories are disclosed as "designed composite" experience in the Bio section, but the disclosure is one sentence in a 15,000-word persona document. A reader skimming the Career Arc sections would encounter specific, believable evidence of professional competence that is entirely synthetic.</p>
+
+    <h4>3. Interplay Between Failures</h4>
+    <p>The six failure classes did not occur independently. They reinforced each other in a cascade that mirrors the trust deficit loop the Researcher identified in CloudNine's own challenges:</p>
+    <ol>
+      <li><strong>Unverified data (Class A)</strong> created the conditions for <strong>framework overfit (Class E)</strong>: because the data was thin, the frameworks supplied structure that the evidence could not support.</li>
+      <li><strong>Synthetic evidence (Class B)</strong> filled the gaps that <strong>unverified data (Class A)</strong> left open. When the pipeline needed a statistic to justify a recommendation, it drew from the agents' LLM-generated career arcs.</li>
+      <li><strong>No verification gates (Class C)</strong> meant that <strong>unverified data (Class A)</strong> and <strong>synthetic evidence (Class B)</strong> were never caught. Each agent passed them forward.</li>
+      <li><strong>Manager-less architecture (Class D)</strong> was the structural cause of <strong>no verification gates (Class C)</strong>. Without a Manager, no one enforced the gates.</li>
+      <li><strong>Framework overfit (Class E)</strong> and <strong>synthetic evidence (Class B)</strong> together created output that looked authoritative. The <strong>hallucinated biographies (Class F)</strong> gave the agents themselves an air of professional credibility that reinforced the reader's impression of rigour.</li>
+    </ol>
+
+    <h4>4. What the Pipeline Did Well (Despite the Failures)</h4>
+    <p>Several aspects of the pipeline functioned as designed and are worth preserving in future iterations:</p>
+    <ul>
+      <li><strong>Structured handoffs:</strong> Each agent produced a clearly structured deliverable with explicit input references, named frameworks, and a dedicated handoff section for the next agent. The handoff format functioned even when the content was unverified.</li>
+      <li><strong>Reflections documents:</strong> Every agent documented its assumptions, data sources, tough decisions, and error flags. The Reflections documents are the pipeline's most valuable output for failure analysis because they capture what each agent knew it did not know. Without them, the failures in the main output would be invisible.</li>
+      <li><strong>Ethical guardrails held:</strong> No agent recommended dark patterns, manipulative language, or deceptive design. The Cialdini ethical edge test and the Brignull taxonomy functioned as design constraints. The Communicator's copy, while built on assumptions, was consistently honest in its framing. The pipeline did not produce unethical output; it produced unverified output.</li>
+      <li><strong>Framework literacy:</strong> The pipeline demonstrated accurate application of all ten academic frameworks. The Mayer-Davis-Schoorman dimensions were correctly assigned. The calibration moves were appropriate. The EU AI Act classification was defensible. The errors were in the evidence base, not in the framework application.</li>
+      <li><strong>Consistent agent voices:</strong> Each agent maintained a distinct, role-appropriate voice throughout its output. The Researcher was sourced and calibrated. The Designer was structured and visual. The Communicator was plain, warm, and specific. The voices did not blur even when the scope boundaries did.</li>
+    </ul>
+
+    <h4>5. Design Changes That Would Prevent These Failures</h4>
+    <table>
+      <thead><tr><th>Change</th><th>Failure Classes Addressed</th><th>Implementation</th></tr></thead>
+      <tbody>
+        <tr><td>Add a Manager agent with quality-gate authority</td><td>C, D</td><td>Include the Manager archetype. The Manager enforces verification at every handoff boundary and has the authority to pause the pipeline when data is insufficient.</td></tr>
+        <tr><td>Add a data-verification phase before design begins</td><td>A, B, C</td><td>Phase 0: screen-level audit of actual CloudNine interfaces, system access for loyalty and AI data, customer vocabulary mining from reviews and complaints. No agent proceeds past Phase 0 until key assumptions are verified or explicitly waived by a human decision-maker.</td></tr>
+        <tr><td>Strip synthetic career-arc "data" from business-case sections</td><td>B, F</td><td>Career arcs remain in persona documents (where they are disclosed as synthetic) but are never cited as evidence in business-case, recommendation, or copy-rationale sections. Business cases cite only verifiable sources or are explicitly labelled as hypothetical projections.</td></tr>
+        <tr><td>Introduce a two-way handoff protocol</td><td>C</td><td>Each handoff includes a "request clarification" right. The Designer can send questions back to the Researcher. The Communicator can request Designer revisions. The output is iterative, not sequential.</td></tr>
+        <tr><td>Framework triage: apply only frameworks the evidence supports</td><td>E</td><td>Before applying each framework, ask: "Do I have enough CloudNine-specific data to make a defensible assessment using this framework?" If no, the framework is deferred or applied with an explicit evidence-weakness caveat. A framework applied without sufficient data is flagged in the output, not in a separate Reflections document.</td></tr>
+        <tr><td>Separate decision document from implementation pack</td><td>9 (aggregate)</td><td>CEO-facing recommendations in one file. Implementation copy specs in another. Cross-reference with clear links. Each audience receives a document optimised for their needs.</td></tr>
+        <tr><td>Add measurement instrumentation to every design spec</td><td>7</td><td>Every design specification includes a measurement section: what data to log, what metrics to track, what statistical test to apply, and what signal threshold triggers a kill/pivot/scale recommendation. The Researcher's Evaluate mode has a defined data feed.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>6. Conclusion</h4>
+    <p>This pipeline produced a complete, structured, and ethically framed output for CloudNine Airlines' trust and transparency challenges. It also produced a rich failure dossier. The failures are not primarily errors of execution; they are errors of architecture. A pipeline that feeds LLM-generated inferences into LLM-generated designs into LLM-generated copy, without a verification step anywhere in the chain, will produce output that looks credible but is unverified. Adding a Manager agent, a data-verification phase, a two-way handoff protocol, and a measurement framework would address the structural weaknesses. The most important single change is also the simplest: every handoff boundary needs a human or agent with the authority to say "stop, verify this, then proceed." Without that, the pipeline will continue to produce well-structured, well-framed, and confidently wrong recommendations.</p>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
