@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HO-01: Trust Landscape Audit - Researcher to Designer Handoff</title>
+<style>
+  :root {
+    --bg: #f8f9fa; --card: #ffffff; --text: #1a1a2e; --muted: #6c757d;
+    --accent: #2c5ea8; --accent-light: #e8f0fa; --border: #dee2e6;
+    --warn: #856404; --warn-bg: #fffbe6; --warn-border: #ffeeba;
+    --pass: #155724; --pass-bg: #d4edda;
+    --fail: #721c24; --fail-bg: #f8d7da;
+    --muted-bg: #f0f4f8;
+    --tag-bg: #e9ecef;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 920px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2c5ea8 100%);
+    color: #ffffff; padding: 2.5rem 2rem; border-radius: 12px; margin-bottom: 2rem;
+  }
+  header .badge-row { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+  header .badge {
+    background: rgba(255,255,255,0.15); padding: 0.25rem 0.75rem;
+    border-radius: 20px; font-size: 0.8rem;
+  }
+  header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+  header .sub { font-size: 1rem; opacity: 0.85; }
+  header .meta { margin-top: 1.25rem; font-size: 0.85rem; opacity: 0.75; }
+  section {
+    background: var(--card); border-radius: 10px; padding: 2rem;
+    margin-bottom: 1.5rem; border: 1px solid var(--border);
+  }
+  section h2 {
+    font-size: 1.15rem; color: var(--accent); margin-bottom: 1rem;
+    padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent-light);
+  }
+  section h3 { font-size: 1rem; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #333; }
+  section h4 { font-size: 0.9rem; margin-top: 1rem; margin-bottom: 0.35rem; color: #555; }
+  blockquote {
+    background: var(--muted-bg); border-left: 4px solid var(--accent);
+    padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 8px 8px 0;
+    font-style: italic; color: #555;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.85rem; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: #f1f3f5; font-weight: 600; color: #495057; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+  li { margin-bottom: 0.3rem; }
+  .finding-card {
+    border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;
+    margin: 1rem 0; background: #fafbfc;
+  }
+  .finding-card h4 { margin-top: 0; color: var(--accent); }
+  .tag {
+    display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
+    font-size: 0.8rem; margin-right: 0.35rem;
+  }
+  .tag-fail { background: var(--fail-bg); color: var(--fail); }
+  .tag-warn { background: var(--warn-bg); color: var(--warn); }
+  .tag-info { background: var(--accent-light); color: var(--accent); }
+  .dimension-table td:first-child { font-weight: 600; white-space: nowrap; }
+  .gap-badge { font-size: 0.8rem; }
+  .unverified {
+    background: var(--warn-bg); border: 1px dashed var(--warn-border);
+    padding: 0.6rem 1rem; border-radius: 6px; margin: 0.5rem 0;
+    color: var(--warn); font-size: 0.9rem;
+  }
+  .exec-summary {
+    background: linear-gradient(135deg, #e8f0fa 0%, #f0f4f8 100%);
+    border: 1px solid var(--accent-light); border-radius: 10px;
+    padding: 1.5rem; margin-bottom: 1.5rem;
+  }
+  .exec-summary p { margin-bottom: 0.75rem; }
+  .priority-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+  .priority-card {
+    border: 1px solid var(--border); border-radius: 8px; padding: 1rem;
+    background: #fafbfc; text-align: center;
+  }
+  .priority-card .rank {
+    font-size: 2rem; font-weight: 700; color: var(--accent); line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .priority-card .label { font-weight: 600; font-size: 0.9rem; }
+  .priority-card .desc { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  @media (max-width: 700px) {
+    body { padding: 1rem 0.5rem; }
+    section { padding: 1.25rem; }
+    header { padding: 1.5rem; }
+    .priority-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="badge-row">
+    <span class="badge">HANDOFF: 01</span>
+    <span class="badge">Researcher &rarr; Designer</span>
+    <span class="badge">CloudNine Airlines</span>
+  </div>
+  <h1>Trust Landscape Audit</h1>
+  <div class="sub">Strategic diagnosis of CloudNine Airlines' three trust and transparency challenges, mapped against the academic frameworks of the Customer Engagement and AI module.</div>
+  <div class="meta">Produced by: CloudNine Research Agent (@Researcher) | Date: 24 June 2026 | Status: Initial audit, awaiting Designer review</div>
+</header>
+
+<!-- ===== EXECUTIVE SUMMARY ===== -->
+<div class="exec-summary">
+  <h2 style="border-bottom: none; padding-bottom: 0; margin-top: 0;">Executive Summary</h2>
+  <p>CloudNine Airlines operates with 4M annual passengers, a loyalty programme of 800,000 members (15% active, or 3% of total base), and ancillary revenue that sits below the low-cost carrier industry average despite broadly competitive pricing. The strategic diagnosis identified three interdependent trust and transparency challenges. This audit maps each against the Mayer-Davis-Schoorman trust construct (ability, benevolence, integrity), Lee and See calibration states, Burrell opacity types, the DART co-creation framework, and the Barocas and Selbst bias pipeline.</p>
+  <p><strong>Primary finding:</strong> All three challenges converge on a single commercial outcome: suppressed ancillary revenue. The loyalty programme trust breakdown, opaque ancillary practices, and low confidence in AI-driven decisions form a self-reinforcing loop. Customers who distrust the loyalty programme share less data, receive less relevant offers, encounter opaque pricing, and retreat further. Breaking this loop requires intervention at the point of highest leverage, not the point of loudest symptom.</p>
+  <p><strong>Recommended priority sequence for the Designer:</strong></p>
+  <div class="priority-grid">
+    <div class="priority-card">
+      <div class="rank">1</div>
+      <div class="label">Ancillary Flow Transparency</div>
+      <div class="desc">Immediate revenue impact; dark-pattern removal is the fastest trust signal</div>
+    </div>
+    <div class="priority-card">
+      <div class="rank">2</div>
+      <div class="label">Loyalty Programme Trust Architecture</div>
+      <div class="desc">Medium-term; rebuilds the data-for-benefits contract that fuels personalisation</div>
+    </div>
+    <div class="priority-card">
+      <div class="rank">3</div>
+      <div class="label">AI Disclosure and Calibration</div>
+      <div class="desc">Structural; prevents trust erosion across all AI-mediated touchpoints</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DETAILED FINDINGS ===== -->
+<section>
+  <h2>Detailed Findings: Challenge-by-Challenge Analysis</h2>
+
+  <!-- Challenge 1 -->
+  <div class="finding-card">
+    <h4>Challenge 1: Loyalty Programme Trust Breakdown</h4>
+    <p><strong>Observed signal:</strong> 800,000 enrolled members, 15% active rate (120,000 active users), representing 3% of total 4M passenger base. This is not a participation problem; it is a trust signal.</p>
+
+    <h4>Trust Dimension Diagnosis</h4>
+    <table class="dimension-table">
+      <thead><tr><th>Dimension</th><th>Assessment</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-fail">Ability</span></td>
+          <td>Likely adequate but unverifiable</td>
+          <td>The programme presumably functions technically (points track, tiers calculate). No direct evidence of system failures. <span class="unverified">[UNVERIFIED: no access to programme backend or error logs]</span></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-fail">Benevolence</span></td>
+          <td><strong>FAILING</strong></td>
+          <td>15% active rate is the strongest available signal. Customers do not believe the programme serves their interests. Low redemption rates, high drop-off from join to first redemption, and possible unannounced point expirations are diagnostic indicators. <span class="unverified">[UNVERIFIED: redemption-rate data and expiry-complaint volume not provided]</span></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-warn">Integrity</span></td>
+          <td>At risk</td>
+          <td>If programme rules change without clear communication, or if earning/redemption terms are inconsistent between marketing and T&Cs, integrity fails. Sentiment analysis of complaints about unclear rules or unfair expiry would confirm. <span class="unverified">[UNVERIFIED: complaint categorisation data not provided]</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>Calibration State: Under-trust (Lee and See 2004)</h4>
+    <p>Customers exhibit systematic under-trust: 85% of enrolled members avoid engagement. This is not calibrated trust; it is disengagement driven by perceived low value or perceived opacity. The trust the programme receives (near zero for most members) is far below what a functional loyalty programme of 800,000 members should command.</p>
+
+    <h4>Opacity Type: Intentional opacity (Burrell 2016), with scale-and-complexity elements</h4>
+    <p>If CloudNine has chosen not to surface earning rules, expiry dates, or redemption paths clearly, this is intentional opacity: a design choice to withhold information. The scale-and-complexity element arises from the number of members and transaction types, but the primary barrier is likely deliberate non-disclosure, not computational intractability. <span class="unverified">[UNVERIFIED: requires audit of actual programme UI and T&Cs against what is technically possible]</span></p>
+
+    <h4>DART Framework Assessment</h4>
+    <table>
+      <thead><tr><th>Pillar</th><th>Status</th><th>Observation</th></tr></thead>
+      <tbody>
+        <tr><td>Dialogue</td><td><span class="tag tag-fail">Weak</span></td><td>No evidence of two-way exchange or customer voice in programme design. Programme is likely a broadcast channel, not a dialogue platform.</td></tr>
+        <tr><td>Access</td><td><span class="tag tag-warn">At risk</span></td><td>Members may be able to see their points, but can they see what they are worth, when they expire, and what prevents redemption? Access to information asymmetry is likely.</td></tr>
+        <tr><td>Risk Assessment</td><td><span class="tag tag-fail">Missing</span></td><td>No evidence customers are informed about AI-related risks (how their data trains personalisation, what the programme uses their behaviour for). Risk is likely not shared.</td></tr>
+        <tr><td>Transparency</td><td><span class="tag tag-fail">FAILING</span></td><td>Core trust prerequisite is unmet. If customers cannot explain in one sentence how they earn and keep value, transparency has failed.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Bias Pipeline Exposure (Barocas and Selbst 2016)</h4>
+    <ul>
+      <li><strong>Target variable risk:</strong> If "loyalty" is defined as "repeat bookings" rather than "engagement across purchase, referral, influence, and knowledge" (Pansari and Kumar 2017), the programme may systematically exclude valuable non-purchasing behaviours.</li>
+      <li><strong>Training data risk:</strong> The 15% active members are the visible data. Any personalisation model trained on this subset will optimise for already-engaged customers and ignore the 85%. This entrenches the gap.</li>
+    </ul>
+
+    <h4>Dark Pattern Exposure (Brignull; Gray et al. 2018)</h4>
+    <ul>
+      <li><strong>Hidden expiry / hidden costs:</strong> Points that expire without prominent notification. This is the most likely dark pattern in airline loyalty programmes.</li>
+      <li><strong>Confusing tier rules:</strong> If qualification thresholds or benefit descriptions are written to obscure rather than clarify.</li>
+      <li><strong>Nagging:</strong> Repeated prompts to join or engage without clear value proposition. <span class="unverified">[UNVERIFIED: requires screen-level audit]</span></li>
+    </ul>
+  </div>
+
+  <!-- Challenge 2 -->
+  <div class="finding-card">
+    <h4>Challenge 2: Opaque Ancillary Revenue Practices</h4>
+    <p><strong>Observed signal:</strong> Ancillary revenue per passenger is below the low-cost carrier industry average, despite pricing that the strategic diagnosis describes as "broadly consistent with low-cost carrier norms." The gap is attributed to transparency failures, not pricing failures.</p>
+
+    <h4>Trust Dimension Diagnosis</h4>
+    <table class="dimension-table">
+      <thead><tr><th>Dimension</th><th>Assessment</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-warn">Ability</span></td>
+          <td>Adequate</td>
+          <td>The booking system processes ancillary purchases. No evidence of technical failures in add-on delivery.</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-fail">Benevolence</span></td>
+          <td><strong>FAILING</strong></td>
+          <td>Customers perceive ancillary offers as "gotcha" pricing rather than genuine service enhancements. When fees appear late in the booking funnel or are pre-selected, the system is perceived as adversarial, not helpful. This mirrors the Mayer-Davis-Schoorman benevolence failure: the customer cannot determine whether the system is acting in their interest.</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-fail">Integrity</span></td>
+          <td><strong>FAILING</strong></td>
+          <td>If the price displayed at search differs from the price at payment (due to late-arriving ancillary fees), the airline has made a commitment it did not keep. This is an integrity failure: the observable action (final price) contradicts the earlier signal (advertised price).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>Calibration State: Under-trust (Lee and See 2004)</h4>
+    <p>Customers avoid optional purchases even when those purchases would genuinely improve their experience. This is systematic under-trust: the customer has learned (through prior experience or reputation) that ancillary offers carry hidden costs, so the safest response is blanket refusal. The calibration is rational given the environment but economically destructive for CloudNine.</p>
+
+    <h4>Opacity Type: Intentional opacity (Burrell 2016), confirmed by dark-pattern indicators</h4>
+    <p>The strategic diagnosis explicitly names "pre-ticked boxes, confusing bundles" and "fees appear late in the funnel" as likely mechanisms. These are intentional design choices, not technical limitations. The opacity is manufactured to increase short-term conversion at the expense of long-term trust.</p>
+
+    <h4>DART Framework Assessment</h4>
+    <table>
+      <thead><tr><th>Pillar</th><th>Status</th><th>Observation</th></tr></thead>
+      <tbody>
+        <tr><td>Dialogue</td><td><span class="tag tag-fail">Absent</span></td><td>An ancillary purchase flow is a monologue: the airline presents offers; the customer accepts or declines. No mechanism for the customer to signal "I would buy this if it were framed differently."</td></tr>
+        <tr><td>Access</td><td><span class="tag tag-fail">FAILING</span></td><td>Information asymmetry is the core problem. The airline knows the full cost of every option; the customer discovers it progressively, often after commitment.</td></tr>
+        <tr><td>Risk Assessment</td><td><span class="tag tag-fail">One-sided</span></td><td>Only the airline assesses risk (pricing models, dynamic bundling). The customer carries the risk of overpaying, missing better options, or being manipulated.</td></tr>
+        <tr><td>Transparency</td><td><span class="tag tag-fail">FAILING</span></td><td>Directly violated where fees are revealed late, pre-selections are embedded, and comparison between options is obstructed by design.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Bias Pipeline Exposure (Barocas and Selbst 2016)</h4>
+    <ul>
+      <li><strong>Feature selection risk:</strong> If the dynamic pricing model uses features that correlate with willingness-to-pay rather than cost-to-serve, certain passenger segments may be systematically charged more. This is price discrimination, not cost recovery. <span class="unverified">[UNVERIFIED: requires access to pricing model feature set]</span></li>
+      <li><strong>Masking risk:</strong> If CloudNine uses third-party pricing or personalisation vendors and cannot audit the model weights, this is masking (Barocas and Selbst mechanism 5).</li>
+    </ul>
+
+    <h4>Dark Pattern Exposure (Brignull)</h4>
+    <table>
+      <thead><tr><th>Pattern</th><th>Likelihood</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Preselection</strong></td><td><span class="tag tag-fail">High</span></td><td>Pre-ticked seat selection, pre-selected baggage add-ons, or pre-checked insurance are the most common dark patterns in airline booking. The user must act to decline rather than to accept.</td></tr>
+        <tr><td><strong>Hidden costs</strong></td><td><span class="tag tag-fail">High</span></td><td>Fees that appear only at the payment stage, after the customer has invested time and cognitive effort in the booking. Classic hotel-resort-fee pattern applied to aviation.</td></tr>
+        <tr><td><strong>Trick wording</strong></td><td><span class="tag tag-warn">Medium</span></td><td>Describing a paid seat selection as "complete your booking" or a baggage bundle as "recommended for your journey" without disclosing the free alternative.</td></tr>
+        <tr><td><strong>Confirmshaming</strong></td><td><span class="tag tag-warn">Medium</span></td><td>"No, I don't want to save time at the airport" or "No, I'll risk my seat assignment" as decline options on ancillary offers.</td></tr>
+        <tr><td><strong>Visual interference</strong></td><td><span class="tag tag-warn">Medium</span></td><td>Making the "add" button visually prominent and the "skip" link small, low-contrast, or positioned to be overlooked.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Challenge 3 -->
+  <div class="finding-card">
+    <h4>Challenge 3: Low Confidence in AI-Driven Decisions</h4>
+    <p><strong>Observed signal:</strong> CloudNine relies on AI for pricing, seat allocation, delay prediction, and customer-service chatbots. The strategic diagnosis identifies these as "high-visibility surfaces where trust is fragile." Observed signals include high chatbot escalation rates, complaints about pricing fairness, opt-outs from personalised recommendations, inconsistent chatbot responses, and confusion about dynamic pricing.</p>
+
+    <h4>Trust Dimension Diagnosis</h4>
+    <table class="dimension-table">
+      <thead><tr><th>Dimension</th><th>Assessment</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-fail">Ability</span></td>
+          <td><strong>At risk</strong></td>
+          <td>Ability failures are likely the primary dimension for AI systems. A chatbot that confidently delivers the wrong refund policy is an ability failure. Inconsistent responses across interactions are ability failures. Dynamic pricing that produces prices passengers cannot reconcile with observable factors is an ability failure in the passenger's perception. <span class="unverified">[UNVERIFIED: requires chatbot error-rate data and dynamic-pricing model audit]</span></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-warn">Benevolence</span></td>
+          <td>At risk</td>
+          <td>Passengers cannot determine whether AI-driven pricing serves their interests or the airline's. When a price rises during a single booking session, the passenger has no way to know whether this reflects genuine demand, inventory change, or manipulative urgency. This is a benevolence gap: the passenger cannot infer intent from behaviour.</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-fail">Integrity</span></td>
+          <td><strong>At risk</strong></td>
+          <td>If the chatbot gives one answer in chat and a different answer appears in the T&Cs on the website, this is an integrity failure per Mayer-Davis-Schoorman. If the airline promises consistent AI behaviour but delivers variable results, integrity is compromised.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>Calibration State: Mixed (predominantly under-trust, with localised over-trust risk)</h4>
+    <p>The dominant state is under-trust (Lee and See 2004): customers distrust AI pricing, avoid personalisation, escalate chatbot interactions, and suppress data sharing. However, a localised over-trust risk exists where passengers accept chatbot answers at face value without verification, particularly on consequential matters like refund eligibility. Both states are mis-calibrated.</p>
+
+    <h4>Opacity Type: Technical opacity (Burrell 2016), with intentional elements</h4>
+    <p>Machine learning models for pricing, seat allocation, and recommendation are technically opaque by nature: even with full access to weights, the decision path is not human-interpretable. However, the failure to disclose that AI is in use, to explain how it works in plain language, or to provide a human escalation path introduces an intentional-opacity layer on top of the technical one. This is the gap Article 50 of the EU AI Act is designed to close.</p>
+
+    <h4>DART Framework Assessment</h4>
+    <table>
+      <thead><tr><th>Pillar</th><th>Status</th><th>Observation</th></tr></thead>
+      <tbody>
+        <tr><td>Dialogue</td><td><span class="tag tag-fail">Absent</span></td><td>AI systems make decisions; passengers receive them. No feedback loop where passengers can challenge, query, or shape AI behaviour.</td></tr>
+        <tr><td>Access</td><td><span class="tag tag-fail">FAILING</span></td><td>Passengers cannot access the logic behind a dynamic price, a seat allocation, or a chatbot response. Information asymmetry is total: only the airline's systems know why a decision was made.</td></tr>
+        <tr><td>Risk Assessment</td><td><span class="tag tag-fail">Not shared</span></td><td>Floridi and Cowls (2019) explicability principle requires that risks be shared. Passengers are not told: what the AI knows about them, what it is optimising for, what its known failure modes are, or how to appeal.</td></tr>
+        <tr><td>Transparency</td><td><span class="tag tag-fail">FAILING</span></td><td>Per Prahalad and Ramaswamy (2004), transparency is the trust prerequisite. CloudNine's AI systems likely meet none of the three transparency tests: data use is opaque (what does the AI know?), model logic is opaque (how does it decide?), and output accountability is opaque (who answers when it is wrong?).</td></tr>
+      </tbody>
+    </table>
+
+    <h4>EU AI Act Assessment (Regulation 2024/1689)</h4>
+    <table>
+      <thead><tr><th>Element</th><th>Assessment</th></tr></thead>
+      <tbody>
+        <tr><td>Risk Tier</td><td><strong>Limited risk</strong> (Article 50). Pricing, recommendation, and chatbot systems for commercial services are not classified as high-risk under Annex III. However, the boundary is worth monitoring: if the chatbot handles medical or accessibility requests, or if pricing systematically disadvantages protected groups, the tier could shift.</td></tr>
+        <tr><td>Article 50 Duty</td><td><strong>Not currently met.</strong> Passengers interacting with the chatbot should be told at first interaction that they are speaking to an AI. AI-generated content (recommendations, personalised offers) should be labelled. <span class="unverified">[UNVERIFIED: requires audit of current chatbot greeting and offer labelling]</span></td></tr>
+        <tr><td>Disclosure Gap</td><td>The four-element disclosure framework (model, oversight, contribution split, verification, per Week 3 V4) has not been evidenced for any CloudNine AI system.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Floridi and Cowls (2019) Five Principles Assessment</h4>
+    <table>
+      <thead><tr><th>Principle</th><th>Status</th><th>Observation</th></tr></thead>
+      <tbody>
+        <tr><td>Beneficence</td><td><span class="tag tag-warn">Unclear</span></td><td>Is the AI optimising for passenger well-being or for ancillary revenue? If these conflict, beneficence fails.</td></tr>
+        <tr><td>Non-maleficence</td><td><span class="tag tag-warn">At risk</span></td><td>Chatbot misinformation on refunds, dynamic pricing that exploits urgency: both are potential harms.</td></tr>
+        <tr><td>Autonomy</td><td><span class="tag tag-fail">At risk</span></td><td>If personalised offers cannot be declined or adjusted, and if the recommendation system cannot be escaped, autonomy is compromised.</td></tr>
+        <tr><td>Justice</td><td><span class="tag tag-warn">Unclear</span></td><td>Does dynamic pricing distribute costs fairly across passenger segments, or does it entrench inequities?</td></tr>
+        <tr><td>Explicability</td><td><span class="tag tag-fail">FAILING</span></td><td>Without disclosure, none of the other four principles can be verified by the passenger. Explicability is the bridge; it is currently missing.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===== SYNTHESIS ===== -->
+<section>
+  <h2>Synthesis: Cross-Cutting Observations</h2>
+
+  <h3>The Self-Reinforcing Trust Deficit Loop</h3>
+  <p>The three challenges are not independent. They form a causal chain:</p>
+  <ol>
+    <li><strong>Opaque ancillary practices</strong> create an initial trust breach. A passenger encounters a hidden fee or a pre-ticked box. The benevolence and integrity dimensions fail simultaneously.</li>
+    <li><strong>This breach suppresses loyalty programme engagement.</strong> Why would a passenger join and share data with an airline whose systems feel adversarial? The 15% active rate is the downstream consequence of the ancillary trust breach, not a separate problem.</li>
+    <li><strong>Low programme engagement starves AI systems of personalisation data.</strong> With only 15% of members active, AI models train on a thin, skewed sample. Personalisation quality degrades, offers become less relevant, and the passenger's perception of AI incompetence (ability failure) is confirmed.</li>
+    <li><strong>Degraded AI reinforces avoidance of all optional interactions</strong> (ancillaries, loyalty, data sharing), closing the loop at step 1.</li>
+  </ol>
+
+  <h3>Breaking the Loop: Leverage Point Analysis</h3>
+  <p>The loop can be broken at any node, but the leverage differs:</p>
+  <ul>
+    <li><strong>Break at Ancillary Transparency (highest leverage, fastest signal):</strong> Remove the dark patterns that cause the initial breach. This is visible, fast, and directly impacts revenue. The Fogg Behaviour Model (B = MAP) predicts that transparent ancillary framing removes the ability barrier (passengers can understand what they are buying) and replaces a dark prompt (pre-selection) with an honest prompt (clear offer with comparison).</li>
+    <li><strong>Break at Loyalty Trust (medium leverage, medium speed):</strong> Redesign the programme to make trust observable: visible earning, expiry warnings, transparent benefit framing. This rebuilds the data contract that fuels personalisation.</li>
+    <li><strong>Break at AI Disclosure (structural leverage, slow speed):</strong> Implement Article 50 disclosure and explicability across all AI touchpoints. This prevents trust erosion at the systemic level but takes the longest to affect passenger perception.</li>
+  </ul>
+</section>
+
+<!-- ===== PRIORITISED RECOMMENDATIONS ===== -->
+<section>
+  <h2>Prioritised Recommendations for the Designer</h2>
+  <p>The following sequence is recommended based on: (a) evidence of trust-dimension failure, (b) estimated speed of passenger-visible signal, (c) proximity to revenue impact, and (d) feasibility of design intervention within a budget carrier's constraints.</p>
+
+  <table>
+    <thead><tr><th>#</th><th>Intervention</th><th>Targets</th><th>Trust Dimension</th><th>Calibration Move</th><th>Signal Speed</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td><strong>Ancillary Flow Transparency Redesign</strong><br>Remove preselection, hidden costs, trick wording, and confirmshaming from the ancillary purchase flow. Replace with neutral selection, upfront total price, clear comparison between options, and honest framing per Cialdini ethical edge.</td>
+        <td>Challenge 2</td>
+        <td>Benevolence + Integrity</td>
+        <td>Show comparison + Progressive disclosure</td>
+        <td>1-2 weeks</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td><strong>Loyalty Programme Trust Dashboard</strong><br>Design a member-facing dashboard using progressive disclosure: three cards (What you have earned / What expires soon and when / What you need for the next tier and how long you have). Replace opaque point totals with transparent earning, expiry, and redemption rules.</td>
+        <td>Challenge 1</td>
+        <td>Benevolence + Integrity</td>
+        <td>Progressive disclosure</td>
+        <td>2-4 weeks</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td><strong>AI Disclosure and Trust Statement System</strong><br>Design disclosure interfaces for chatbot (turn-1 AI identification), dynamic pricing (collapsible "How your price is calculated" panel), and personalised recommendations (opt-out with visible control). Implement four-element AI disclosure statement per Week 3 V4 pattern.</td>
+        <td>Challenge 3</td>
+        <td>Ability + Integrity</td>
+        <td>Show uncertainty + Progressive disclosure</td>
+        <td>1-3 months</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== HANDOFF NOTES ===== -->
+<section>
+  <h2>Handoff Notes for the Designer</h2>
+  <p><strong>Designer,</strong> this audit maps the trust landscape. Your task is to convert these findings into buildable interventions. Here is what you specifically need from this document:</p>
+  <ul>
+    <li><strong>Section "Detailed Findings"</strong> gives you the trust dimension (ability, benevolence, integrity) that each design must target. A design that fixes benevolence but leaves integrity broken is incomplete.</li>
+    <li><strong>Calibration states</strong> tell you what calibration move to deploy: under-trust calls for showing uncertainty and offering comparison; over-trust (chatbot) calls for progressive disclosure and clear limits.</li>
+    <li><strong>Dark pattern table</strong> under Challenge 2 is your removal checklist. Every pattern in the High-likelihood column should be designed out.</li>
+    <li><strong>The synthesis loop</strong> is the constraint you design within. Changing the ancillary flow without changing the loyalty dashboard will break the loop at step 1 but leave steps 2-4 intact. The three interventions should be designed as a system, not as independent screens.</li>
+    <li><strong>EU AI Act Article 50</strong> is a legal requirement, not a design preference. The Designer must ensure every AI-mediated touchpoint meets the first-interaction disclosure standard.</li>
+    <li><strong>Fogg B = MAP</strong> should guide interaction design: place honest prompts where passenger motivation and ability already intersect. Do not design prompts that work only by reducing ability (obscuring information).</li>
+    <li><strong>Verified vs. unverified:</strong> Every finding marked [UNVERIFIED] in this document is a gap you inherit. If you need that information to design, flag it back to me for further research. Do not design around an assumption you cannot verify.</li>
+  </ul>
+  <blockquote>Contract before work: your deliverable should name (a) which trust dimension each design targets, (b) which calibration move it employs, (c) the dark patterns it removes, and (d) the Fogg factors it addresses (motivation, ability, or prompt).</blockquote>
+</section>
+
+<!-- ===== OPEN QUESTIONS ===== -->
+<section>
+  <h2>Open Questions and Data Gaps</h2>
+  <table>
+    <thead><tr><th>#</th><th>Gap</th><th>Impact if Unresolved</th><th>Proposed Method to Close</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>No access to CloudNine's actual ancillary purchase flow for screen-level dark-pattern audit. All dark-pattern assessments are inferential, based on industry patterns in low-cost carriers.</td><td>Designer may target patterns that do not exist or miss patterns that do.</td><td>Request screen capture or live walkthrough of the full booking flow, search to payment.</td></tr>
+      <tr><td>2</td><td>No access to loyalty programme redemption rate, expiry timing, or complaint categorisation data. Benevolence and integrity assessments are based on the 15% active rate as a proxy.</td><td>Intervention may address the wrong failure mode. If the primary problem is ability (system bugs) rather than benevolence, a trust-focused redesign will not solve it.</td><td>Request loyalty programme analytics: active rate by cohort, redemption rate, complaint tags, drop-off funnel from join to first redemption.</td></tr>
+      <tr><td>3</td><td>No access to chatbot error rates, escalation logs, or consistency metrics. Ability assessment for Challenge 3 is inferential.</td><td>Designer may design a disclosure interface for a system whose primary problem is competence, not opacity. Disclosure cannot fix a broken model.</td><td>Request chatbot analytics: containment rate, escalation rate, top-10 error categories, consistency score across repeated queries.</td></tr>
+      <tr><td>4</td><td>No competitor trust benchmark completed. Competitive context is drawn from general industry knowledge, not a structured comparison.</td><td>Recommendations may target practices that are industry-standard (and therefore competitively neutral) rather than competitively differentiating.</td><td>If needed, request that I run a Competitive Trust Benchmark (see my skills list).</td></tr>
+      <tr><td>5</td><td>EU AI Act Article 50 compliance status is unverified. Assessment assumes no disclosure is currently in place, which may be incorrect.</td><td>Design effort may be directed at a gap that does not exist, or may miss a more specific gap (e.g. disclosure exists but fails the "clear and accessible" standard).</td><td>Request audit of current chatbot greeting text and any existing AI disclosure language on CloudNine's digital surfaces.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</div>
+</body>
+</html>
