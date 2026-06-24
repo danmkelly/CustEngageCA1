@@ -9,7 +9,7 @@
     --bg: #f4f6f9; --card: #ffffff; --text: #1a1a2e; --muted: #6c757d;
     --accent: #1a5276; --accent-light: #e8f4fd; --border: #dee2e6;
     --researcher: #2c5ea8; --designer: #8b5e3c; --communicator: #117a65;
-    --aggregate: #6c3483; --create: #5b6abf;
+    --aggregate: #6c3483; --create: #5b6abf; --report: #c0392b;
     --warn: #856404; --warn-bg: #fffbe6;
     --shadow: 0 2px 12px rgba(0,0,0,0.06);
   }
@@ -37,6 +37,7 @@
   .icon-researcher { background: var(--researcher); }
   .icon-designer { background: var(--designer); }
   .icon-communicator { background: var(--communicator); }
+  .icon-report { background: var(--report); }
   .icon-aggregate { background: var(--aggregate); }
   .flow-step .connector { display: none; }
 
@@ -137,8 +138,13 @@
       <div class="step-label">Communicator</div>
       <div class="step-sub">HO-03</div>
     </div>
+    <div class="flow-step" data-stage="finalreport">
+      <div class="step-icon icon-report">5</div>
+      <div class="step-label">Final Report</div>
+      <div class="step-sub">CEO View</div>
+    </div>
     <div class="flow-step" data-stage="aggregate">
-      <div class="step-icon icon-aggregate">5</div>
+      <div class="step-icon icon-aggregate">6</div>
       <div class="step-label">Wash-Up</div>
       <div class="step-sub">Dossier</div>
     </div>
@@ -321,10 +327,44 @@
     </div>
   </div>
 
-  <!-- STAGE 5: AGGREGATE -->
+  <!-- STAGE 5: FINAL REPORT -->
+  <div class="stage-panel" id="panel-finalreport">
+    <div class="stage-header">
+      <h2>Step 5: Final Report</h2>
+      <p class="stage-desc">The business-leadership-facing output of the three-agent pipeline: crisp recommendations with rationale and concerns, options not pursued, and an implementation roadmap.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="badge badge-output">Final Report</span> CloudNine Trust &amp; Transparency Recommendations</h3>
+      <p style="color:var(--muted); font-size:0.85rem; margin-bottom:0.75rem;">This report is the primary pipeline output. It contains the three prioritised recommendations (transparent ancillary flow, loyalty dashboard, AI disclosure system), five options considered but not recommended, a phased implementation roadmap, all customer-facing copy specifications, and a reflexive AI disclosure statement about the report itself. Authored for a CEO audience but with full implementation detail.</p>
+      <ul class="link-list">
+        <li><a href="HO-03-Communicator-to-FinalReport.html" target="_blank"><span class="ico">&#128203;</span> Full Final Report (HO-03)</a></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Report Contents at a Glance</h3>
+      <table style="width:100%; border-collapse:collapse; font-size:0.83rem;">
+        <thead><tr style="background:#f1f3f5;"><th style="text-align:left;padding:0.5rem;">Section</th><th style="text-align:left;padding:0.5rem;">What It Covers</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;"><strong>Executive Summary</strong></td><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;">Root cause (trust, not pricing), three interventions with revenue impact and timelines, connected-system logic</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;"><strong>Recommendation 1</strong></td><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;">Transparent ancillary purchase flow: what, why, expected business results (short/medium/long term), key concerns</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;"><strong>Recommendation 2</strong></td><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;">Loyalty dashboard: three-card progressive disclosure, expiry notifications, join flow, business results</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;"><strong>Recommendation 3</strong></td><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;">AI disclosure system: chatbot greeting, pricing panel, personalisation opt-out, full disclosure statement, EU AI Act compliance</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;"><strong>Options Not Pursued</strong></td><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;">5 alternatives evaluated and rejected: deep-discount loyalty incentives, ancillary price reduction, aggressive personalisation, chatbot replacement, standalone implementation</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;"><strong>Implementation Roadmap</strong></td><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;">5 phases across 16+ weeks with owners, success measures, and critical-path dependencies</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;"><strong>Detailed Copy Specifications</strong></td><td style="padding:0.4rem 0.5rem; border-bottom:1px solid #eee;">35+ COMMUNICATOR COPY slots filled across all three designs, with rationale notes and quality-standards verification</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;"><strong>AI Disclosure Statement</strong></td><td style="padding:0.4rem 0.5rem;">Reflexive four-element disclosure about the report itself: what the AI did, what it did not do, human oversight, verification path</td></tr>
+        </tbody>
+      </table>
+      <div class="note-box"><strong>Audience:</strong> The report is structured with CEO-facing business sections first (Executive Summary through Implementation Roadmap) and implementation detail (Copy Specifications, AI Disclosure) as appendices. A CEO reading only the first half gets a complete decision document.</div>
+    </div>
+  </div>
+
+  <!-- STAGE 6: AGGREGATE -->
   <div class="stage-panel" id="panel-aggregate">
     <div class="stage-header">
-      <h2>Step 5: Wash-Up &mdash; End-to-End Weakness Analysis</h2>
+      <h2>Step 6: Wash-Up &mdash; End-to-End Weakness Analysis</h2>
       <p class="stage-desc">With the pipeline executed end to end, a cross-agent meta-analysis was produced documenting critical weaknesses by class (not instance) and proposing text for Task 4: Failure Dossier.</p>
     </div>
 
