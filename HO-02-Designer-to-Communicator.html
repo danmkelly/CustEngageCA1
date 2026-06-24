@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HO-02: Trust Intervention Design Specs - Designer to Communicator Handoff</title>
+<style>
+  :root {
+    --bg: #f8f9fa; --card: #ffffff; --text: #1a1a2e; --muted: #6c757d;
+    --accent: #8b5e3c; --accent-light: #fdf0e6; --border: #dee2e6;
+    --warn: #856404; --warn-bg: #fffbe6; --warn-border: #ffeeba;
+    --pass: #155724; --pass-bg: #d4edda;
+    --fail: #721c24; --fail-bg: #f8d7da;
+    --info: #0c5460; --info-bg: #d1ecf1;
+    --muted-bg: #f0f4f8; --tag-bg: #e9ecef;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; padding: 2rem 1rem; }
+  .container { max-width: 960px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #3c2415 0%, #8b5e3c 100%); color: #ffffff; padding: 2.5rem 2rem; border-radius: 12px; margin-bottom: 2rem; }
+  header .badge-row { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+  header .badge { background: rgba(255,255,255,0.15); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; }
+  header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 0.5rem; }
+  header .sub { font-size: 1rem; opacity: 0.85; }
+  header .meta { margin-top: 1.25rem; font-size: 0.85rem; opacity: 0.75; }
+  section { background: var(--card); border-radius: 10px; padding: 2rem; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+  section h2 { font-size: 1.15rem; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent-light); }
+  section h3 { font-size: 1rem; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #333; }
+  section h4 { font-size: 0.9rem; margin-top: 1rem; margin-bottom: 0.35rem; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+  blockquote { background: var(--muted-bg); border-left: 4px solid var(--accent); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 8px 8px 0; font-style: italic; color: #555; }
+  table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.85rem; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: #f1f3f5; font-weight: 600; color: #495057; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+  li { margin-bottom: 0.3rem; }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.8rem; margin-right: 0.35rem; }
+  .tag-fail { background: var(--fail-bg); color: var(--fail); }
+  .tag-warn { background: var(--warn-bg); color: var(--warn); }
+  .tag-pass { background: var(--pass-bg); color: var(--pass); }
+  .tag-info { background: var(--info-bg); color: var(--info); }
+  .spec-card { border: 1px solid var(--border); border-radius: 10px; padding: 1.75rem; margin: 1.25rem 0; background: #fafbfc; }
+  .spec-card .spec-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .spec-card .spec-num { background: var(--accent); color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; flex-shrink: 0; }
+  .spec-card .spec-title { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+  .wireframe-box { border: 2px dashed var(--border); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; background: #fdfdfd; }
+  .wireframe-box h5 { margin-top: 0; color: #555; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  .wireframe-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0.5rem 0; }
+  .wireframe-row > div { flex: 1; min-width: 200px; border: 1px solid #e0e0e0; border-radius: 6px; padding: 0.75rem; background: #fff; }
+  .wireframe-label { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem; color: #333; }
+  .wireframe-desc { font-size: 0.8rem; color: #777; }
+  .flow-step { display: flex; align-items: flex-start; gap: 0.75rem; margin: 0.75rem 0; }
+  .flow-step .step-num { background: var(--accent-light); color: var(--accent); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+  .flow-step .step-content { flex: 1; }
+  .assumption-box { background: var(--warn-bg); border: 1px dashed var(--warn-border); padding: 0.75rem 1rem; border-radius: 6px; margin: 0.75rem 0; color: var(--warn); font-size: 0.85rem; }
+  .contract-box { background: linear-gradient(135deg, #fdf0e6 0%, #fef9f5 100%); border: 1px solid var(--accent-light); border-radius: 10px; padding: 1.5rem; margin: 1rem 0; }
+  .contract-box h4 { margin-top: 0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .copy-slot { background: #fef9f5; border: 1px dashed #8b5e3c; border-radius: 6px; padding: 0.5rem 0.75rem; margin: 0.35rem 0; font-size: 0.85rem; }
+  .copy-slot .slot-label { font-weight: 600; color: #8b5e3c; font-size: 0.75rem; text-transform: uppercase; }
+  @media (max-width: 700px) {
+    body { padding: 1rem 0.5rem; } section { padding: 1.25rem; } header { padding: 1.5rem; }
+    .wireframe-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="badge-row">
+    <span class="badge">HANDOFF: 02</span>
+    <span class="badge">Designer &rarr; Communicator</span>
+    <span class="badge">CloudNine Airlines</span>
+  </div>
+  <h1>Trust Intervention Design Specifications</h1>
+  <div class="sub">Three buildable design interventions addressing CloudNine Airlines' trust and transparency challenges, converted from the Researcher's Trust Landscape Audit (HO-01).</div>
+  <div class="meta">Produced by: CloudNine Design Agent (@Designer) | Input: Researcher HO-01 | Date: 24 June 2026 | Status: Awaiting Communicator review and copy</div>
+</header>
+
+<!-- ===== DESIGN OVERVIEW ===== -->
+<section>
+  <h2>Design Overview</h2>
+  <p>These three specifications convert the Researcher's Trust Landscape Audit (HO-01) into buildable interventions. Each spec targets a specific trust dimension, employs a named calibration move, removes identified dark patterns, and addresses Fogg behaviour factors. The three designs are presented as a connected system: the ancillary flow generates the trust that drives loyalty engagement, and the loyalty dashboard feeds the data that powers transparent AI disclosure.</p>
+
+  <table>
+    <thead><tr><th>#</th><th>Design</th><th>Trust Dimensions</th><th>Calibration Move</th><th>Researcher Priority</th><th>Estimated Dev Effort</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>Ancillary Flow Transparency Redesign</td><td>Benevolence + Integrity</td><td>Show comparison + Progressive disclosure</td><td>1 (highest)</td><td>Small (one flow, 6-8 screens)</td></tr>
+      <tr><td><strong>2</strong></td><td>Loyalty Programme Trust Dashboard</td><td>Benevolence + Integrity</td><td>Progressive disclosure</td><td>2</td><td>Medium (new dashboard, data integration)</td></tr>
+      <tr><td><strong>3</strong></td><td>AI Disclosure and Trust Statement System</td><td>Ability + Integrity</td><td>Show uncertainty + Progressive disclosure</td><td>3</td><td>Medium-Large (multiple touchpoints, new components)</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>Design philosophy:</strong> Every element in these specifications must survive the test: "If CloudNine published this design in a transparency report, would it build or erode confidence?" If an element requires deception to convert, it does not belong in the spec.</p>
+</section>
+
+<!-- ===== DESIGN 1 ===== -->
+<section>
+  <h2>Design 1: Ancillary Flow Transparency Redesign</h2>
+
+  <div class="spec-card">
+    <div class="spec-header">
+      <div class="spec-num">1</div>
+      <div class="spec-title">Ancillary Flow Transparency Redesign</div>
+    </div>
+
+    <h4>Trust Contract</h4>
+    <table>
+      <thead><tr><th>Element</th><th>Specification</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Trust dimension targeted</strong></td><td>Benevolence (system must be perceivable as acting in passenger interest) and Integrity (price commitments must be kept from search to payment).</td></tr>
+        <tr><td><strong>Calibration move</strong></td><td>Show comparison (passenger sees all options side-by-side with prices) and Progressive disclosure (complexity revealed on demand, not dumped at once).</td></tr>
+        <tr><td><strong>Dark patterns removed</strong></td><td>Preselection (nothing pre-ticked), Hidden costs (total price visible at every step), Trick wording (all labels are neutral and descriptive), Confirmshaming (decline options are dignified), Visual interference (accept and decline have visual parity).</td></tr>
+        <tr><td><strong>Fogg factors addressed</strong></td><td>Ability (choices are understandable: plain labels, upfront prices, visible comparison), Prompt (honest framing at the decision point: "Here is what you get. Here is the price. Choose."), Motivation (fairness perception increases willingness to purchase).</td></tr>
+        <tr><td><strong>Ethical edge check</strong></td><td>Every claim is true. The passenger keeps control at every decision point. No deceptive twins.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Flow Specification: Seat Selection</h4>
+    <p>This is the first ancillary touchpoint in a typical booking flow and the highest-risk screen for dark patterns. The redesign covers five screens; the seat selection screen is specified in detail as the pattern for all others.</p>
+
+    <div class="wireframe-box">
+      <h5>Screen: Seat Selection (post flight selection, pre payment)</h5>
+
+      <div class="flow-step">
+        <div class="step-num">A</div>
+        <div class="step-content">
+          <strong>Header bar (persistent throughout flow)</strong><br>
+          Displays running total: "Your flight: EUR 49.99 | Total so far: EUR 49.99 | Seats, bags, and extras below"
+          <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Persistent total-price bar language for every screen in the flow.</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-num">B</div>
+        <div class="step-content">
+          <strong>Seat selection area: three-column comparison layout</strong><br>
+          Column 1: "No seat selection (free)" -- "We will assign you a seat at check-in. You may be seated separately from others on your booking." [Select: default, visually prominent]<br>
+          Column 2: "Standard seat (EUR 4.99)" -- "Choose a standard seat now. Window, aisle, or middle. See the seat map to pick." [Select]<br>
+          Column 3: "Extra legroom (EUR 12.99)" -- "Rows 1-5 and emergency exit rows. More space for the flight. See the seat map to pick." [Select]
+          <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Option labels and descriptions for seat selection. Must be neutral, factual, no shaming.</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-num">C</div>
+        <div class="step-content">
+          <strong>Seat map (revealed on demand)</strong><br>
+          Triggered when passenger selects "Standard seat" or "Extra legroom." Shows aircraft layout with available seats highlighted. Selected seat is marked. Price is displayed next to the seat map title: "Standard seat: EUR 4.99." Back button returns to three-column view.
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-num">D</div>
+        <div class="step-content">
+          <strong>Continue button</strong><br>
+          Label: "Continue to baggage" (not "Complete booking" or "Next: Save on baggage"). The button is the same visual weight whether the passenger selected a seat or not. No differential treatment.
+          <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Continue-button labels for each step. Must not imply the current decision is required.</div>
+        </div>
+      </div>
+    </div>
+
+    <h4>Pattern Specification: All Ancillary Screens</h4>
+    <p>The same structural principles apply to baggage, priority boarding, meals, and in-flight shopping screens:</p>
+    <table>
+      <thead><tr><th>Screen</th><th>Options</th><th>Dark Pattern Removed</th><th>Calibration Move</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Baggage</strong></td><td>(a) No checked bag (free, hand luggage only), (b) 15kg checked bag (EUR X), (c) 23kg checked bag (EUR Y)</td><td>Preselection of a paid option; confusing bundle names ("Smart Saver Bundle")</td><td>Show comparison: three columns, prices visible, weight allowance named</td></tr>
+        <tr><td><strong>Priority Boarding</strong></td><td>(a) Standard boarding (free), (b) Priority boarding (EUR X) with description of what it includes: "Board when your group is called" vs. "Board first, before general boarding"</td><td>Trick wording that implies standard boarding is slow or risky; confirmshaming decline options</td><td>Show comparison; honest decline: "No thanks, standard boarding is fine for me"</td></tr>
+        <tr><td><strong>Meals</strong></td><td>(a) No meal (free, purchase on board or bring your own), (b) Pre-order meal (EUR X) with menu link</td><td>Fake urgency ("Limited meals available"); preselection</td><td>Show comparison; if scarcity is real, say "X meals remaining at this price" with live count; if not real, do not claim scarcity</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Design Constraints</h4>
+    <ul>
+      <li><strong>Mobile-first:</strong> The three-column comparison layout must collapse to a stacked vertical layout on screens narrower than 600px. On mobile, options appear as vertically stacked cards with the free option at the top.</li>
+      <li><strong>No dark patterns, period:</strong> The Brignull taxonomy is the checklist. If a UI element appears on the deceptive.design list, it does not ship.</li>
+      <li><strong>Total price visible:</strong> A persistent price bar at the top of every ancillary screen shows: flight price + selected add-ons + running total. The passenger never reaches the payment screen surprised.</li>
+      <li><strong>Neutral defaults:</strong> The free option is always the default selection. No pre-ticked paid options anywhere in the flow.</li>
+    </ul>
+
+    <div class="assumption-box">
+      <strong>Designer assumption:</strong> I am specifying for a standard web-based booking flow with a mobile-responsive layout. If CloudNine's booking system is a single-page application with a fundamentally different architecture, the flow steps may need to be adapted. I am also assuming the current flow has preselection, hidden costs, trick wording, and confirmshaming as named by the Researcher. If a screen-level audit reveals different or additional dark patterns, the removal list extends accordingly.
+    </div>
+  </div>
+</section>
+
+<!-- ===== DESIGN 2 ===== -->
+<section>
+  <h2>Design 2: Loyalty Programme Trust Dashboard</h2>
+
+  <div class="spec-card">
+    <div class="spec-header">
+      <div class="spec-num">2</div>
+      <div class="spec-title">Loyalty Programme Trust Dashboard</div>
+    </div>
+
+    <h4>Trust Contract</h4>
+    <table>
+      <thead><tr><th>Element</th><th>Specification</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Trust dimension targeted</strong></td><td>Benevolence (the programme must be perceivable as fair and value-delivering) and Integrity (earning, expiry, and redemption rules must be observable and consistent).</td></tr>
+        <tr><td><strong>Calibration move</strong></td><td>Progressive disclosure (complexity is layered: summary cards first, detail on tap).</td></tr>
+        <tr><td><strong>Dark patterns removed</strong></td><td>Hidden expiry (expiry dates are prominent, not buried), confusing tier rules (thresholds and benefits are plain and visible), nagging (engagement prompts are contextual and valuable, not repetitive).</td></tr>
+        <tr><td><strong>Fogg factors addressed</strong></td><td>Ability (the dashboard makes the programme understandable: how to earn, how to redeem, what is at risk), Motivation (visible progress toward next tier, visible value of points, visible time pressure that is real), Prompt (expiry notifications, tier-proximity nudges, redemption suggestions at natural decision points).</td></tr>
+        <tr><td><strong>Ethical edge check</strong></td><td>Every expiry is real. Every tier threshold is accurate. Every benefit description matches what the programme delivers.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Dashboard Architecture: Three-Card Progressive Disclosure</h4>
+    <p>The dashboard replaces a dense table or list with three cards that function as progressive disclosure. The top-level card shows a summary; tapping or clicking expands to detail.</p>
+
+    <div class="wireframe-box">
+      <h5>Dashboard Layout (member-facing page, post-login)</h5>
+
+      <div class="wireframe-row">
+        <div>
+          <div class="wireframe-label">Card 1: Earned</div>
+          <div class="wireframe-desc">
+            <strong>Summary view:</strong> "You have 2,450 points."<br>
+            <strong>Expanded view:</strong> Recent earning activity (last 5 transactions), earning rate ("You earn 1 point for every EUR 1 spent on flights"), total points earned this year, points redeemed this year.<br><br>
+            <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> All card labels, summary text, earning-rate explanation, and transaction descriptions.</div>
+          </div>
+        </div>
+        <div>
+          <div class="wireframe-label">Card 2: Expiring</div>
+          <div class="wireframe-desc">
+            <strong>Summary view:</strong> "450 points expire on 15 August 2026" (only if expirations exist within 90 days; otherwise: "No points expiring soon").<br>
+            <strong>Expanded view:</strong> Expiry calendar (next 12 months, month-by-month), expiry policy ("Points expire 24 months after they are earned. We will email you 30 days before any points expire."), notification settings toggle ("Email me 30 days before points expire" -- default ON).<br><br>
+            <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Expiry warning language, expiry policy explanation, notification settings label.</div>
+          </div>
+        </div>
+        <div>
+          <div class="wireframe-label">Card 3: Next Tier</div>
+          <div class="wireframe-desc">
+            <strong>Summary view:</strong> Progress bar: "Silver tier: 7,550 points to go. Reach by 31 December 2026." (with visual progress indicator).<br>
+            <strong>Expanded view:</strong> Tier benefits comparison table (current tier vs. next tier, side-by-side), earning acceleration tips ("Book 3 more return flights this year to reach Silver"), time remaining with countdown.<br><br>
+            <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Tier names, benefit descriptions, progress language, acceleration tips.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4>Additional Components</h4>
+    <table>
+      <thead><tr><th>Component</th><th>Specification</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Redemption Catalogue (link from dashboard)</strong></td><td>A searchable, filterable list of redemption options with point costs displayed prominently. Each option card shows: what you get, point cost, equivalent cash value ("2,000 points = approx. EUR 20 toward a flight"), and a "Redeem" button. No hidden terms. No "subject to availability" buried in small print.</td></tr>
+        <tr><td><strong>Expiry Notification Email (system-triggered)</strong></td><td>30 days before any points expire, an email is triggered automatically. Subject: "450 of your CloudNine points expire on [date]." Body: clear statement of expiring points, link to redemption catalogue, one-click "Redeem now" button. The email must not use fake urgency: the date is real, the consequence is real, the tone is helpful not threatening.</td></tr>
+        <tr><td><strong>Join Flow (pre-member to member)</strong></td><td>If the passenger is not a member, the dashboard is replaced with a transparent join screen that states: what you get (one sentence), how points work (one sentence), what data is used (one sentence with link to privacy policy), and a single "Join CloudNine Rewards" button. No pre-ticked newsletter sign-up. No hidden data-sharing consents.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Design Constraints</h4>
+    <ul>
+      <li><strong>Progressive disclosure:</strong> The dashboard must work as three summary cards at first load. No passenger should see a wall of data on arrival. Detail is one tap away.</li>
+      <li><strong>Real-time data:</strong> Point balances, expiry dates, and tier progress must reflect the live state of the member's account. No cached or stale data that could mislead.</li>
+      <li><strong>Expiry policy must be displayed:</strong> Not linked. Not in T&Cs. On-screen, in the Expiring card, in plain language.</li>
+      <li><strong>Notifications must default ON:</strong> The expiry notification toggle is opt-out, not opt-in. The consequence of missing an expiry is loss of value; the default should protect the passenger.</li>
+    </ul>
+
+    <div class="assumption-box">
+      <strong>Designer assumption:</strong> I am assuming CloudNine has a functioning loyalty programme backend that can serve real-time point balances, transaction histories, expiry dates, and tier progress. If the backend cannot support real-time data, a "last updated" timestamp must be displayed prominently. I am also assuming the programme has tier levels (e.g. Blue, Silver, Gold). If the programme uses a different structure, the tier card adapts accordingly.
+    </div>
+  </div>
+</section>
+
+<!-- ===== DESIGN 3 ===== -->
+<section>
+  <h2>Design 3: AI Disclosure and Trust Statement System</h2>
+
+  <div class="spec-card">
+    <div class="spec-header">
+      <div class="spec-num">3</div>
+      <div class="spec-title">AI Disclosure and Trust Statement System</div>
+    </div>
+
+    <h4>Trust Contract</h4>
+    <table>
+      <thead><tr><th>Element</th><th>Specification</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Trust dimension targeted</strong></td><td>Ability (AI systems must be competent or at least honest about their limits) and Integrity (disclosure commitments must be observable and kept).</td></tr>
+        <tr><td><strong>Calibration move</strong></td><td>Show uncertainty (confidence indicators, hedges, "I am not sure") and Progressive disclosure (simple disclosure at first interaction, detail available on demand).</td></tr>
+        <tr><td><strong>Dark patterns addressed</strong></td><td>No impersonation (AI must self-identify at first interaction per EU AI Act Article 50), no hidden automation bias (passengers must know when a decision is automated), no obstruction of human escalation path.</td></tr>
+        <tr><td><strong>Fogg factors addressed</strong></td><td>Ability (disclosure makes AI behaviour understandable, which enables calibrated reliance), Motivation (transparency increases willingness to engage with AI-mediated services), Prompt (disclosure at the interaction point, not buried in privacy policy).</td></tr>
+        <tr><td><strong>EU AI Act compliance</strong></td><td>Article 50: disclosure at first AI interaction, clear and accessible format, non-burdensome. Four-element disclosure statement (model, oversight, contribution, verification) per Week 3 V4 design pattern.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Component 3a: Chatbot First-Interaction Disclosure</h4>
+    <div class="wireframe-box">
+      <h5>Chatbot Greeting (Turn 1, before any user input)</h5>
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>AI identification banner (persistent, top of chat window)</strong><br>
+          Icon + text: "CloudNine Assistant (automated)" -- small, unobtrusive, always visible.
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Greeting message (Turn 1, from the bot)</strong><br>
+          Structure: (a) Self-identification, (b) capability statement, (c) limit statement, (d) escalation path.<br>
+          <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Full chatbot greeting message covering all four elements above. Must be plain, honest, and set calibrated expectations.</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Human escalation button (always visible, top-right of chat window)</strong><br>
+          Label: "Speak to a person." Triggers transfer to human agent queue with estimated wait time displayed.<br>
+          <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Escalation button label and transfer-confirmation message.</div>
+        </div>
+      </div>
+    </div>
+
+    <h4>Component 3b: Dynamic Pricing Disclosure Panel</h4>
+    <div class="wireframe-box">
+      <h5>Pricing Page (collapsible panel below every fare display)</h5>
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Price display with info icon</strong><br>
+          Fare price with a small "(i)" icon next to it. Tapping/clicking the icon expands the disclosure panel below the price.
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Collapsed state (below price, always visible)</strong><br>
+          "Price generated by automated system. <a>How it works</a>"<br>
+          <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> One-line price disclosure text and link label.</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Expanded panel (three plain-language factors)</strong><br>
+          "Your price is calculated using: (1) Route and travel dates -- popular routes and dates may cost more. (2) How far ahead you book -- earlier often costs less. (3) Current demand -- prices can change as seats fill up."<br>
+          <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Three-factor plain-language explanation of dynamic pricing.</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Link to full pricing policy</strong><br>
+          "Read our full pricing policy." Links to a publicly accessible, plain-language pricing policy page.<br>
+          <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Pricing policy page content (plain language, not legal).</div>
+        </div>
+      </div>
+    </div>
+
+    <h4>Component 3c: Personalisation Opt-Out</h4>
+    <div class="wireframe-box">
+      <h5>Recommendation / Personalised Offer Display</h5>
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Offer label (visible on every personalised offer)</strong><br>
+          "Suggested for you based on your previous bookings with us." Small text below or beside the offer.<br>
+          <div class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Personalisation disclosure label and opt-out toggle language.</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Opt-out toggle (account settings, not buried)</strong><br>
+          Accessible from: (a) the offer itself ("See fewer like this"), (b) account settings page. Toggle: "Personalised recommendations: ON | OFF." When OFF, a one-line confirmation: "You will still see offers, but they will not be based on your previous activity."
+        </div>
+      </div>
+    </div>
+
+    <h4>Component 3d: AI Disclosure Statement (Public Page)</h4>
+    <p>A standalone page linked from the website footer ("How we use AI") containing the four-element disclosure per Week 3 V4 design pattern:</p>
+    <table>
+      <thead><tr><th>Element</th><th>Specification</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1. Model and version</strong></td><td>Names the AI systems CloudNine uses in customer-facing contexts: chatbot model/vendor, pricing algorithm type, recommendation engine type. Includes version or date of last update. <span class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Model and version disclosure text.</span></td></tr>
+        <tr><td><strong>2. Oversight</strong></td><td>States that a human reviews chatbot interactions flagged for escalation, that pricing models are audited quarterly, and that recommendation outputs are reviewed for bias. Names the team or role responsible. <span class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Oversight description.</span></td></tr>
+        <tr><td><strong>3. Contribution split</strong></td><td>States what the AI does and what humans do. Example: "Our chatbot answers common questions about bookings, baggage, and check-in. If it cannot help, or if you prefer, a person on our customer team takes over." <span class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Contribution split description.</span></td></tr>
+        <tr><td><strong>4. Verification path</strong></td><td>States how a passenger can verify claims. "You can check your interaction history in your account. Our AI Disclosure Statement is updated on [date]. If something here is not true when you experience it, tell us at [email/chat]." <span class="copy-slot"><span class="slot-label">COMMUNICATOR COPY:</span> Verification path and feedback mechanism.</span></td></tr>
+      </tbody>
+    </table>
+
+    <h4>Design Constraints</h4>
+    <ul>
+      <li><strong>Disclosure must be at first interaction:</strong> Not after the chatbot has answered three questions. Not in a post-booking email. At Turn 1.</li>
+      <li><strong>Disclosure must survive the read-aloud test:</strong> Every sentence in the AI disclosure pages and chatbot greeting must be something a passenger could read to a friend and have it be both true and useful.</li>
+      <li><strong>Opt-out must be real:</strong> Turning off personalisation must actually turn it off. No "reduced personalisation" that is still personalised. The toggle controls behaviour, not wording.</li>
+      <li><strong>Disclosure Statement is a living document:</strong> The page must carry a "last updated" date. If the AI systems change, the disclosure must change with them.</li>
+    </ul>
+
+    <div class="assumption-box">
+      <strong>Designer assumption:</strong> I am assuming CloudNine uses a third-party or internally developed chatbot and dynamic pricing system. If these are vendor-provided with limited customisation, the disclosure design may need to adapt to what the vendor allows. The chatbot greeting and escalation button are front-end components that should be customisable regardless of vendor. I am also assuming "limited risk" under the EU AI Act per the Researcher's classification. If the classification is wrong, the disclosure requirements may be stricter.
+    </div>
+  </div>
+</section>
+
+<!-- ===== SYSTEM SYNTHESIS ===== -->
+<section>
+  <h2>System Synthesis: How the Three Designs Connect</h2>
+  <p>These three designs are not independent screens. They form a connected trust architecture:</p>
+
+  <table>
+    <thead><tr><th>Connection</th><th>Specification</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Ancillary Flow &rarr; Loyalty Dashboard</strong></td><td>After completing a booking with transparent ancillary purchases, the confirmation page includes a one-line loyalty prompt: "You just earned [X] points on this booking. <a>See your points</a>." The language matches the loyalty dashboard's Card 1 (Earned). Consistency between the flow and the dashboard builds integrity: what the booking says you earned is what the dashboard shows.</td></tr>
+      <tr><td><strong>Loyalty Dashboard &rarr; AI Disclosure</strong></td><td>The loyalty dashboard's "What you have earned" card includes a small note: "Your points and offers are personalised based on your booking history. <a>How we use your data</a>" linking to the AI Disclosure Statement page (Component 3d). This creates informed consent: the passenger sees the benefit (points) and understands the mechanism (data use).</td></tr>
+      <tr><td><strong>AI Disclosure &rarr; Ancillary Flow</strong></td><td>The pricing disclosure panel (Component 3b) uses the same language register and design pattern as the ancillary flow's comparison layout (Design 1). Consistent visual language across trust surfaces reinforces integrity: the airline's disclosure behaviour is predictable.</td></tr>
+      <tr><td><strong>Chatbot &rarr; Loyalty Dashboard</strong></td><td>The chatbot must be able to answer loyalty questions (points balance, expiry dates, tier progress) with the same data the dashboard displays. Inconsistency between chatbot answers and dashboard data is an integrity failure. The chatbot's knowledge base must share a single source of truth with the dashboard backend.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="assumption-box">
+    <strong>Designer assumption:</strong> The system synthesis assumes the three designs can be connected within CloudNine's existing technical architecture. If the booking flow, loyalty backend, and AI systems run on separate platforms with no shared data layer, the connections above become integration projects rather than design elements. This would affect scope and delivery timeline.
+  </div>
+</section>
+
+<!-- ===== COMMUNICATOR HANDOFF ===== -->
+<section>
+  <h2>Handoff Notes for the Communicator</h2>
+  <p><strong>Communicator,</strong> these three design specifications contain the structure, flow, and interaction rules. Your task is to fill every <span class="copy-slot" style="display:inline;"><span class="slot-label">COMMUNICATOR COPY</span></span> slot in this document with language that passengers will read, hear, or chat with. Here is what you specifically need from this document:</p>
+
+  <div class="contract-box">
+    <h4>Your Copy Contract</h4>
+    <ol>
+      <li><strong>Ancillary Flow Copy (Design 1):</strong> Option labels and descriptions for seat selection, baggage, priority boarding, and meals. Continue-button labels. Total-price bar language. Decline-option phrasing that is dignified, not shaming. Every label must survive the read-aloud test: neutral, factual, no trick wording.</li>
+      <li><strong>Loyalty Dashboard Copy (Design 2):</strong> Three card labels and summary text. Earning-rate explanation. Expiry policy in plain language. Expiry notification email subject and body. Tier names, benefit descriptions, and progress language. Join-flow copy: one-sentence value proposition, one-sentence points explanation, one-sentence data-use statement.</li>
+      <li><strong>AI Disclosure Copy (Design 3):</strong> Chatbot greeting (self-identification, capability, limits, escalation path). Pricing disclosure: one-line collapsed state, three-factor expanded panel, pricing policy page content. Personalisation label and opt-out toggle language. Full four-element AI Disclosure Statement page (model, oversight, contribution, verification). Escalation button label.</li>
+    </ol>
+  </div>
+
+  <h4>Quality Standards for All Copy</h4>
+  <table>
+    <thead><tr><th>Standard</th><th>What It Means</th></tr></thead>
+    <tbody>
+      <tr><td><strong>True</strong></td><td>Every claim can be verified against CloudNine's actual systems. If the pricing algorithm uses demand, route, and timing, say that. If it uses more factors, either name all of them or say "and other factors" honestly. Do not claim simplicity that is not real.</td></tr>
+      <tr><td><strong>Disprovable</strong></td><td>A passenger who reads the copy and then uses the system should be able to check whether the copy was accurate. "You earn 1 point per EUR spent" is disprovable: a passenger can book a EUR 50 flight and check whether they got 50 points.</td></tr>
+      <tr><td><strong>Useful</strong></td><td>The copy must help the passenger make a better decision. "Points expire 24 months after they are earned" is useful. "Points are subject to our standard terms and conditions" is decorative.</td></tr>
+      <tr><td><strong>Read-aloud survivable</strong></td><td>If a passenger read the sentence aloud to a friend, would it build or erode trust? Use that as your gut check on every line.</td></tr>
+      <tr><td><strong>No dark patterns in language</strong></td><td>Per Brignull: no confirmshaming, no fake urgency ("Only 2 left" when false), no trick wording, no manufactured FOMO. Per Cialdini ethical edge: if the claim is true and the passenger keeps control, it is honest persuasion. If either fails, it is a dark pattern.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Shared Language Register</h4>
+  <p>All three designs must use the same passenger-facing language register. If the ancillary flow says "standard seat," the loyalty dashboard should not say "regular seat allocation." If the pricing disclosure says "route and travel dates," the chatbot should not say "destination and calendar period." Consistency across touchpoints is an integrity signal: the airline uses one voice.</p>
+
+  <h4>What You Inherit from HO-01</h4>
+  <ul>
+    <li>The Researcher's trust landscape audit identified the three challenges and their dimensional failures. Your copy must address the dimension each design targets. For Design 1, your copy must make benevolence and integrity observable. For Design 2, same. For Design 3, your copy must make ability and integrity observable.</li>
+    <li>The Researcher flagged five open data gaps. I have designed around them with assumptions marked. You inherit those assumptions. If your copy depends on an assumption that turns out to be wrong (e.g. the loyalty programme's actual expiry policy is different from what I have assumed), the copy will need revision.</li>
+    <li>The Researcher's dark-pattern audit is inferential. Your copy audit (your Communication Ethics Audit skill) should verify each touchpoint independently.</li>
+  </ul>
+
+  <blockquote>Contract before work: your deliverable should (a) fill every COMMUNICATOR COPY slot in this document, (b) pass the true/disprovable/useful test on every sentence, (c) maintain a single language register across all three designs, and (d) flag any copy elements where you cannot verify the underlying claim.</blockquote>
+</section>
+
+</div>
+</body>
+</html>
