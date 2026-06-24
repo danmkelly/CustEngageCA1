@@ -67,6 +67,7 @@
 
   .link-list { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
   .link-list li { margin: 0; }
+  .link-list li.placeholder { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.5rem 0.75rem; background: #fafafa; border-radius: 6px; font-size: 0.85rem; border: 1px dashed var(--border); color: var(--text); }
   .link-list a { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.75rem; background: #f8f9fb; border-radius: 6px; text-decoration: none; color: var(--text); font-size: 0.85rem; border: 1px solid var(--border); transition: all 0.15s; }
   .link-list a:hover { background: var(--accent-light); border-color: var(--accent); }
   .link-list a .ico { width: 20px; text-align: center; font-size: 0.9rem; }
@@ -79,10 +80,13 @@
   .flow-mini .step-dot { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #fff; font-weight: 700; }
   .flow-mini .step-arrow { color: #ccc; font-size: 0.8rem; }
 
-  .segmented { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
-  .seg-btn { padding: 0.4rem 0.85rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; border: 1px solid var(--border); background: #fff; color: var(--text); transition: all 0.15s; }
-  .seg-btn:hover { background: #f0f0f0; }
-  .seg-btn.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .segmented { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .segmented .seg-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 0.25rem; font-weight: 600; }
+  .seg-btn { padding: 0.55rem 1.1rem; border-radius: 24px; font-size: 0.85rem; cursor: pointer; border: 2px solid var(--border); background: #fff; color: var(--text); transition: all 0.2s; font-weight: 600; }
+  .seg-btn:hover { background: #f0f0f0; border-color: #bbb; }
+  .seg-btn.sel { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 8px rgba(26,82,118,0.25); }
+  .seg-btn::after { content: ' \25BC'; font-size: 0.6rem; opacity: 0.5; }
+  .seg-btn.sel::after { opacity: 1; }
 
   .sub-panel { display: none; }
   .sub-panel.show { display: block; animation: fadeSlide 0.25s ease; }
@@ -172,7 +176,7 @@
           <li><a href="https://github.com/danmkelly/CustEngageCA1/blob/main/01%20Initial%20Context%20to%20Build%203x%20Agents.txt" target="_blank"><span class="ico">&#128196;</span> Agent Creation Instructions</a></li>
           <li><a href="https://github.com/danmkelly/CustEngageCA1/blob/main/04%20five-innovators-spec.md" target="_blank"><span class="ico">&#128196;</span> Five Innovators Spec</a></li>
           <li><a href="https://github.com/danmkelly/CustEngageCA1/blob/main/04a%20agent-persona-template.md" target="_blank"><span class="ico">&#128196;</span> Agent Persona Template</a></li>
-          <li style="opacity:0.75;"><span class="ico">&#128194;</span> 03 Module Decks.zip <span style="font-size:0.75rem;color:var(--muted);">(19 lecture PDFs, Weeks 1-5 -- not linked: binary .zip containing copyrighted course materials, excluded from public repository)</span></li>
+          <li class="placeholder"><div><span class="ico">&#128194;</span> <strong>03 Module Decks.zip</strong></div><div style="font-size:0.7rem;color:var(--muted);padding-left:1.65rem;">19 lecture PDFs (Weeks 1-5). Not linked: copyrighted course materials excluded from public repository.</div></li>
         </ul>
       </div>
     </div>
@@ -202,6 +206,7 @@
     </div>
 
     <div class="segmented">
+      <span class="seg-label">View:</span>
       <button class="seg-btn sel" onclick="switchSub('researcher', 'readiness')">Readiness Check</button>
       <button class="seg-btn" onclick="switchSub('researcher', 'execution')">Execution</button>
     </div>
@@ -242,6 +247,7 @@
     </div>
 
     <div class="segmented">
+      <span class="seg-label">View:</span>
       <button class="seg-btn sel" onclick="switchSub('designer', 'readiness')">Readiness Check</button>
       <button class="seg-btn" onclick="switchSub('designer', 'execution')">Execution</button>
     </div>
@@ -282,6 +288,7 @@
     </div>
 
     <div class="segmented">
+      <span class="seg-label">View:</span>
       <button class="seg-btn sel" onclick="switchSub('communicator', 'readiness')">Readiness Check</button>
       <button class="seg-btn" onclick="switchSub('communicator', 'execution')">Execution</button>
     </div>
