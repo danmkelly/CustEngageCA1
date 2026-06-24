@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HO-03: Trust Intervention Report - CloudNine Airlines</title>
+<style>
+  :root {
+    --bg: #f8f9fa; --card: #ffffff; --text: #1a1a2e; --muted: #6c757d;
+    --accent: #1a5276; --accent-light: #e8f4fd; --border: #dee2e6;
+    --warn: #856404; --warn-bg: #fffbe6;
+    --pass: #155724; --pass-bg: #d4edda;
+    --fail: #721c24; --fail-bg: #f8d7da;
+    --muted-bg: #f0f4f8; --tag-bg: #e9ecef;
+    --accent2: #117a65; --accent2-light: #e8f8f5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; padding: 2rem 1rem; }
+  .container { max-width: 960px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #0d2b45 0%, #1a5276 50%, #2471a3 100%); color: #ffffff; padding: 3rem 2.5rem; border-radius: 12px; margin-bottom: 2rem; }
+  header .eyebrow { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; margin-bottom: 0.5rem; }
+  header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; }
+  header .sub { font-size: 1.05rem; opacity: 0.85; line-height: 1.5; }
+  header .meta-row { margin-top: 1.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.85rem; opacity: 0.7; }
+  header .ai-badge { margin-top: 1.5rem; display: inline-block; background: rgba(255,255,255,0.12); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.2); }
+  section { background: var(--card); border-radius: 10px; padding: 2rem; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+  section h2 { font-size: 1.15rem; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent-light); }
+  section h3 { font-size: 1rem; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #333; }
+  section h4 { font-size: 0.9rem; margin-top: 1rem; margin-bottom: 0.35rem; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+  blockquote { background: var(--muted-bg); border-left: 4px solid var(--accent); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 8px 8px 0; font-style: italic; color: #555; }
+  table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.85rem; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: #f1f3f5; font-weight: 600; color: #495057; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+  li { margin-bottom: 0.3rem; }
+  .rec-card { border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin: 1.25rem 0; background: #fafbfc; }
+  .rec-card .rec-num { background: var(--accent); color: #fff; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; margin-right: 0.75rem; vertical-align: middle; }
+  .rec-card .rec-title { font-size: 1.05rem; font-weight: 700; color: var(--accent); display: inline; vertical-align: middle; }
+  .rec-card .impact-row { display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; }
+  .impact-item { flex: 1; min-width: 120px; text-align: center; padding: 0.75rem; background: var(--accent-light); border-radius: 8px; }
+  .impact-item .impact-val { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+  .impact-item .impact-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .copy-slot { border: 1px solid var(--accent2); border-radius: 8px; padding: 1rem 1.25rem; margin: 0.75rem 0; background: #fafefc; }
+  .copy-slot .slot-label { font-weight: 700; color: var(--accent2); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; }
+  .copy-slot .slot-content { font-size: 1rem; color: #222; }
+  .copy-slot .slot-notes { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; font-style: italic; }
+  .concern-box { background: var(--warn-bg); border: 1px solid var(--warn); border-radius: 8px; padding: 1rem 1.25rem; margin: 0.75rem 0; }
+  .concern-box .concern-label { font-weight: 700; color: var(--warn); font-size: 0.8rem; text-transform: uppercase; }
+  .ai-disclosure-box { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0; }
+  .ai-disclosure-box h4 { color: var(--accent); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  @media (max-width: 700px) { body { padding: 1rem 0.5rem; } section { padding: 1.25rem; } header { padding: 1.5rem; } .impact-row { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ===== TITLE ===== -->
+<header>
+  <div class="eyebrow">Confidential &middot; For CloudNine Airlines Leadership</div>
+  <h1>Building Trust to Drive Revenue:<br>Three Interventions for CloudNine Airlines</h1>
+  <div class="sub">A final report with actionable recommendations to strengthen passenger trust, improve transparency, and increase ancillary revenue.</div>
+  <div class="meta-row">
+    <span>Date: 24 June 2026</span>
+    <span>Produced by: CloudNine Communications Agent (@Communicator)</span>
+    <span>Based on: Researcher HO-01 + Designer HO-02</span>
+  </div>
+  <div class="ai-badge">This report was produced by an AI colleague (CloudNine Communications Agent) using the DeepSeek V4 Pro large language model, with human editorial oversight. It is not the work of a human consultant. All recommendations carry disclosed assumptions; verify before implementing.</div>
+</header>
+
+<!-- ===== EXECUTIVE SUMMARY ===== -->
+<section>
+  <h2>Executive Summary</h2>
+
+  <p>CloudNine Airlines carries 4 million passengers annually. 800,000 are enrolled in the loyalty programme; only 120,000 (15%) are active. Ancillary revenue per passenger sits below the budget carrier average. These are not separate problems. They are two symptoms of one root cause: passengers do not trust CloudNine's systems enough to engage with them.</p>
+
+  <p>When passengers encounter hidden fees, pre-ticked boxes, or prices that change between search and payment, they learn a simple lesson: the safest move is to decline everything. No seat selection. No baggage add-on. No loyalty sign-up. No data sharing. Every "no" a passenger clicks is a revenue opportunity that trust would have converted into a "yes."</p>
+
+  <p>This report recommends three interventions, prioritised by business impact and speed to market:</p>
+
+  <table>
+    <thead><tr><th>#</th><th>Intervention</th><th>Primary Revenue Impact</th><th>Time to Signal</th><th>Effort</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td><strong>Redesign the ancillary purchase flow</strong> to remove dark patterns. No pre-ticked boxes. Total price visible from the start. Honest, clear options throughout.</td>
+        <td>Ancillary revenue per passenger (direct)</td>
+        <td>2-4 weeks</td>
+        <td>Small (one flow)</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td><strong>Launch a transparent loyalty dashboard</strong> that shows every member three things: what they have earned, what expires and when, and how close they are to the next tier.</td>
+        <td>Loyalty active rate (medium-term), data availability for personalisation (long-term)</td>
+        <td>4-8 weeks</td>
+        <td>Medium (new dashboard)</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td><strong>Deploy AI disclosure across all customer touchpoints.</strong> Tell passengers when they are speaking to a bot, how prices are calculated, and what their data is used for. Make opting out easy and real.</td>
+        <td>Chatbot containment rate, personalisation opt-in rate, complaint reduction</td>
+        <td>6-12 weeks</td>
+        <td>Medium-large (multiple touchpoints)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>These three interventions form a connected system.</strong> Transparent ancillaries build the initial trust that drives loyalty sign-ups. An active loyalty base provides the data that powers relevant personalisation. Honest AI disclosure ensures that personalisation is welcomed, not feared. Each intervention feeds the next.</p>
+
+  <p><strong>Bottom line:</strong> CloudNine does not have a pricing problem. Competitor pricing is comparable. The gap is trust: passengers avoid optional purchases because the system feels like it is working against them. Fixing that perception requires design changes and language changes, not discounting. The interventions in this report are operationally feasible for a budget carrier and directly address the revenue metric that matters most.</p>
+</section>
+
+<!-- ===== RECOMMENDATION 1 ===== -->
+<section>
+  <h2>Recommendation 1: Transparent Ancillary Purchase Flow</h2>
+
+  <div class="rec-card">
+    <span class="rec-num">1</span><span class="rec-title">Remove dark patterns from the ancillary purchase flow and replace with transparent, comparable options</span>
+
+    <div class="impact-row">
+      <div class="impact-item"><div class="impact-val">Direct</div><div class="impact-label">Revenue Impact</div></div>
+      <div class="impact-item"><div class="impact-val">2-4 weeks</div><div class="impact-label">Time to Signal</div></div>
+      <div class="impact-item"><div class="impact-val">Small</div><div class="impact-label">Build Effort</div></div>
+      <div class="impact-item"><div class="impact-val">Immediate</div><div class="impact-label">Passenger-Visible</div></div>
+    </div>
+
+    <h4>What We Recommend</h4>
+    <p>Redesign the seat selection, baggage, priority boarding, and meals screens in the booking flow. Replace the current likely pattern (pre-ticked paid options, fees revealed late, confusing bundles, shaming decline language) with a transparent three-option comparison layout. Every screen shows: the free option first and as the default, the paid options with clear prices, and a persistent total-price bar that updates in real time.</p>
+
+    <h4>Why This Matters</h4>
+    <p>Ancillary revenue is the profit engine of a budget carrier. CloudNine's ancillary revenue sits below the industry average despite competitive pricing. The problem is not what CloudNine charges; it is how CloudNine presents the charges. When fees appear late in the booking funnel, passengers feel ambushed and respond by declining everything. When options are pre-selected, passengers feel manipulated and respond by distrusting everything. A transparent flow converts fewer passengers per interaction but earns more revenue per trusting passenger over time. Industry evidence from European low-cost carriers shows that the two airlines with the highest ancillary revenue per passenger share one trait: transparent fee disclosure before the booking flow, not during it.</p>
+
+    <h4>Expected Business Results</h4>
+    <ul>
+      <li><strong>Short term (1-3 months):</strong> Ancillary attach rate may dip initially as preselection-driven conversions are removed. Expect a 5-10% volume decline offset by a reduction in complaint volume and basket abandonment.</li>
+      <li><strong>Medium term (3-6 months):</strong> Repeat booking rate improvement as passengers who experience the transparent flow return. The Designer's career-arc evidence suggests a 14% repeat booking uplift from transparent vs. dark-pattern flows. Ancillary revenue per passenger should stabilise at or above current levels, driven by higher trust rather than higher pressure.</li>
+      <li><strong>Long term (6-12 months):</strong> The transparent ancillary flow becomes the entry point to the loyalty programme. Passengers who trust the purchase experience are more likely to join and engage.</li>
+    </ul>
+
+    <h4>Key Concerns</h4>
+    <div class="concern-box">
+      <div class="concern-label">Concern</div>
+      <p>If CloudNine's current ancillary revenue depends significantly on preselection and late-fee-revelation patterns, removing them will cause a measurable short-term revenue drop. The business must be prepared to ride out a 1-2 quarter dip in exchange for the medium-term trust dividend. This is a leadership decision, not a design decision. Recommendation: A/B test the transparent flow on 10% of traffic before full rollout to quantify the revenue impact and build the internal case.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RECOMMENDATION 2 ===== -->
+<section>
+  <h2>Recommendation 2: Transparent Loyalty Dashboard</h2>
+
+  <div class="rec-card">
+    <span class="rec-num">2</span><span class="rec-title">Launch a three-card loyalty dashboard that makes earning, expiry, and tier progress visible at a glance</span>
+
+    <div class="impact-row">
+      <div class="impact-item"><div class="impact-val">Medium-term</div><div class="impact-label">Revenue Impact</div></div>
+      <div class="impact-item"><div class="impact-val">4-8 weeks</div><div class="impact-label">Time to Signal</div></div>
+      <div class="impact-item"><div class="impact-val">Medium</div><div class="impact-label">Build Effort</div></div>
+      <div class="impact-item"><div class="impact-val">3 months</div><div class="impact-label">Measurable Shift</div></div>
+    </div>
+
+    <h4>What We Recommend</h4>
+    <p>Replace the current loyalty programme interface with a three-card progressive-disclosure dashboard. Card 1 ("What you have earned") shows current points, recent activity, and earning rate. Card 2 ("What expires soon") shows upcoming expirations with a calendar view and notification controls (default ON). Card 3 ("Your next tier") shows a progress bar, time remaining, and benefits comparison. For non-members, the dashboard is replaced by a transparent join screen that explains the programme in three plain-language sentences.</p>
+
+    <h4>Why This Matters</h4>
+    <p>CloudNine has 800,000 enrolled loyalty members. Only 120,000 are active. That means 680,000 passengers raised their hands and said "yes, I am interested" and then walked away. This is not a marketing problem; it is a product problem. If members cannot see what their points are worth, when they expire, or how close they are to the next tier, they have no reason to open the dashboard. A transparent dashboard that shows value, risk, and progress turns a dormant list into an active base. Every active member is a passenger who shares data, receives relevant offers, and has a reason to choose CloudNine over a competitor on the same route.</p>
+
+    <h4>Expected Business Results</h4>
+    <ul>
+      <li><strong>Short term (1-3 months):</strong> Dashboard opens and card-expand rates provide early engagement signal. Expect 20-30% of currently inactive members to open the dashboard at least once in the first month after redesign, driven by expiry-notification emails.</li>
+      <li><strong>Medium term (3-6 months):</strong> Active member rate improvement. The Designer's career-arc evidence from a regional airline loyalty dashboard redesign shows a 22% redemption-rate increase. If CloudNine sees even half that impact, an additional 13,000 members become active within two quarters.</li>
+      <li><strong>Long term (6-12 months):</strong> Increased data availability for personalisation. More active members means more behavioural data, which means more relevant ancillary offers, which closes the loop back to Recommendation 1.</li>
+    </ul>
+
+    <h4>Key Concerns</h4>
+    <div class="concern-box">
+      <div class="concern-label">Concern</div>
+      <p>The loyalty dashboard requires real-time or near-real-time data from CloudNine's loyalty backend. If the current backend cannot serve point balances, expiry dates, and tier progress on demand, the dashboard will show stale data, which is an integrity failure worse than showing no data. The build effort estimate assumes the backend can support real-time queries. If not, the scope expands significantly. Additionally, the 30-day expiry notification email relies on CloudNine having accurate expiry-date data. If expiry tracking is currently manual or batch-processed, this component requires backend investment beyond the dashboard itself.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RECOMMENDATION 3 ===== -->
+<section>
+  <h2>Recommendation 3: AI Disclosure Across All Touchpoints</h2>
+
+  <div class="rec-card">
+    <span class="rec-num">3</span><span class="rec-title">Tell passengers when AI is involved, how it works, and how to opt out. Meet EU AI Act Article 50 requirements.</span>
+
+    <div class="impact-row">
+      <div class="impact-item"><div class="impact-val">Structural</div><div class="impact-label">Revenue Impact</div></div>
+      <div class="impact-item"><div class="impact-val">6-12 weeks</div><div class="impact-label">Time to Signal</div></div>
+      <div class="impact-item"><div class="impact-val">Med-Large</div><div class="impact-label">Build Effort</div></div>
+      <div class="impact-item"><div class="impact-val">Compliance</div><div class="impact-label">Regulatory</div></div>
+    </div>
+
+    <h4>What We Recommend</h4>
+    <p>Deploy AI disclosure across four touchpoints: (1) the customer-service chatbot identifies itself as automated at Turn 1; (2) every fare display includes a collapsible panel explaining how the price was calculated; (3) every personalised recommendation carries a label and an opt-out toggle that actually works; (4) a standalone "How we use AI" page in the website footer contains a full disclosure statement following the four-element framework: model and version, human oversight, contribution split (what the AI does vs. what humans do), and verification path (how a passenger can check that these claims are true).</p>
+
+    <h4>Why This Matters</h4>
+    <p>CloudNine's passengers interact with AI at multiple points: the chatbot, dynamic pricing, personalised recommendations, delay predictions. None of these interactions currently carry disclosure. The passenger cannot tell whether a price is fair, whether a chatbot answer is reliable, or whether their data is being used in ways they did not consent to. This erodes confidence across the entire digital experience. Article 50 of the EU AI Act requires that AI interactions be disclosed at first contact. CloudNine has a legal obligation to meet this standard. But the business case is stronger than compliance: passengers who understand how a price is calculated are more willing to pay it. Passengers who know they can opt out of personalisation are more willing to opt in.</p>
+
+    <h4>Expected Business Results</h4>
+    <ul>
+      <li><strong>Short term (1-3 months):</strong> Chatbot containment rate improvement as calibrated expectations reduce frustration-to-escalation. Complaints about pricing fairness should decline. The Designer's career-arc evidence shows a 31% reduction in pricing complaints from a similar three-tier disclosure framework at another airline.</li>
+      <li><strong>Medium term (3-6 months):</strong> Personalisation opt-in rate stabilisation. Passengers who can see the mechanism and the off-switch are more comfortable leaving it on. Opt-out rates may initially rise (as passengers discover the toggle) and then stabilise at a lower level than pre-disclosure opt-out-by-default rates.</li>
+      <li><strong>Long term (6-12 months):</strong> EU AI Act compliance confirmed. Regulator-ready disclosure posture. Competitive differentiation: as AI regulation tightens, CloudNine is ahead rather than catching up.</li>
+    </ul>
+
+    <h4>Key Concerns</h4>
+    <div class="concern-box">
+      <div class="concern-label">Concern</div>
+      <p>This recommendation requires access to CloudNine's actual AI systems to write accurate disclosure. If the chatbot is a third-party vendor product with limited customisation, the Turn 1 greeting and escalation button may not be customisable without vendor cooperation. If the pricing algorithm uses factors beyond the three named (route, timing, demand), the disclosure must name the real factors, not simplified ones. A disclosure that is incomplete is worse than no disclosure: it creates an integrity failure (the airline said one thing; the system did another). Additionally, the EU AI Act risk-tier classification as "limited risk" is provisional. If CloudNine's AI systems handle data that shifts them into "high risk," the disclosure requirements are stricter than those specified here.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== OPTIONS NOT PURSUED ===== -->
+<section>
+  <h2>Options Considered but Not Recommended</h2>
+  <p>The research and design pipeline evaluated several alternative approaches. The following were considered and set aside, with rationale:</p>
+
+  <table>
+    <thead><tr><th>Option</th><th>Why Considered</th><th>Why Not Pursued</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Deep-discount loyalty sign-up incentive</strong> (e.g. 5,000 bonus points on join)</td>
+        <td>Fast way to boost enrolment numbers. Industry-common tactic.</td>
+        <td>Incentives drive sign-ups but not active engagement. Adding 100,000 new members to a programme where 85% are already inactive is adding passengers to a broken system. Fix the programme's trust architecture first; if active rate is still low after the dashboard and transparent ancillary flow are live, revisit incentives as a supplementary lever.</td>
+      </tr>
+      <tr>
+        <td><strong>Ancillary price reduction</strong> (e.g. cut seat selection fees by 30%)</td>
+        <td>Direct lever on the revenue metric. May increase volume.</td>
+        <td>The strategic diagnosis states that CloudNine's ancillary pricing is "broadly consistent with low-cost carrier norms." The gap is trust, not price. Cutting prices when the root cause is opaque presentation is treating the symptom with the wrong medicine. It also permanently reduces margin on every sale, including sales to passengers who would have paid the current price if the flow were transparent.</td>
+      </tr>
+      <tr>
+        <td><strong>Aggressive AI-personalisation push</strong> (mandatory personalisation with no opt-out)</td>
+        <td>More data means better offers means higher conversion.</td>
+        <td>This is the opposite of trust-building. Mandatory personalisation without disclosure trains passengers to distrust every interaction. It also risks non-compliance with the EU AI Act if personalisation involves automated decision-making with legal or similarly significant effects. The recommended approach (disclosed, opt-out-able personalisation) earns more voluntary data over time than a mandatory system earns through force.</td>
+      </tr>
+      <tr>
+        <td><strong>Full chatbot replacement</strong> (new vendor, new AI model)</td>
+        <td>If the current chatbot is genuinely incompetent, a new one could improve ability-trust.</td>
+        <td>Replacing the chatbot is a procurement and integration project, not a design intervention. It also does not address the transparency problem: a new chatbot without disclosure has the same trust failure mode as the old one. The recommended approach (disclosure + escalation path) improves trust regardless of the underlying chatbot quality. If the chatbot is genuinely underperforming, disclosure makes the limits visible and gives passengers a fast path to human help, which is a better outcome than an undisclosed underperforming bot.</td>
+      </tr>
+      <tr>
+        <td><strong>Standalone interventions</strong> (implement only Design 1, defer 2 and 3)</td>
+        <td>Faster time to market. Lower build risk.</td>
+        <td>The three challenges form a self-reinforcing loop. Fixing the ancillary flow without fixing the loyalty dashboard leaves the data-for-personalisation gap intact. Fixing both without AI disclosure leaves the chatbot and pricing trust breaches untouched. The three interventions are designed as a connected system. Implementing them sequentially is fine; implementing only one is not. The recommended sequence (1, then 2, then 3) respects the loop while managing build risk.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== IMPLEMENTATION ROADMAP ===== -->
+<section>
+  <h2>Implementation Roadmap</h2>
+
+  <table>
+    <thead><tr><th>Phase</th><th>Timeline</th><th>Action</th><th>Owner</th><th>Success Measure</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Phase 1</strong></td>
+        <td>Weeks 1-2</td>
+        <td>Screen-level audit of current ancillary flow, loyalty dashboard, chatbot greeting, and pricing display. Verify which dark patterns are actually present. Verify which AI systems are in use and how they work. All findings marked [UNVERIFIED] in the research and design pipeline need closure before build begins.</td>
+        <td>Internal UX + Compliance</td>
+        <td>Gap list: confirmed vs. absent patterns, confirmed vs. absent AI systems</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 2</strong></td>
+        <td>Weeks 3-6</td>
+        <td>Build and A/B test the transparent ancillary flow (Recommendation 1). Deploy to 10% of traffic. Measure: ancillary attach rate, basket abandonment, complaint volume, Net Promoter Score on the booking experience.</td>
+        <td>Product + Engineering</td>
+        <td>Statistically significant signal on ancillary revenue per passenger in the test group vs. control</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 3</strong></td>
+        <td>Weeks 4-10</td>
+        <td>Build the loyalty dashboard (Recommendation 2). Begin with real-time data integration. Launch to 100% of loyalty members. Include the 30-day expiry notification email as a Day 1 feature.</td>
+        <td>Loyalty + Engineering</td>
+        <td>Dashboard open rate, card-expand rate, redemption rate, active-member rate</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 4</strong></td>
+        <td>Weeks 8-16</td>
+        <td>Deploy AI disclosure across all touchpoints (Recommendation 3). Chatbot greeting (Turn 1), pricing panel, personalisation toggle, full AI Disclosure Statement page. Verify EU AI Act Article 50 compliance.</td>
+        <td>Product + Legal + Engineering</td>
+        <td>Chatbot escalation rate, pricing complaint volume, personalisation opt-in/opt-out ratio, regulator-ready disclosure posture</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 5</strong></td>
+        <td>Week 12+</td>
+        <td>Full rollout of ancillary flow (if A/B test is positive). System integration review: verify that ancillary flow language matches loyalty dashboard language matches AI disclosure language. One voice across all touchpoints.</td>
+        <td>Product + Communications</td>
+        <td>Language consistency audit, active-member rate trend, ancillary revenue trend</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== DETAILED COPY SPECIFICATIONS ===== -->
+<section>
+  <h2>Detailed Copy Specifications</h2>
+  <p>The following copy fills every COMMUNICATOR COPY slot specified in the Designer's HO-02 handoff. Each slot is presented with its design context and the rationale for the chosen language. All copy is written in a single register: plain, warm, specific. No sentence claims more than can be verified.</p>
+
+  <hr>
+
+  <!-- DESIGN 1 COPY -->
+  <h3>Design 1: Ancillary Flow Copy</h3>
+
+  <h4>Persistent Total-Price Bar</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Total-Price Bar (persistent, top of every ancillary screen)</div>
+    <div class="slot-content">Your flight: <strong>EUR 49.99</strong> &nbsp;|&nbsp; Extras selected: <strong>EUR 0.00</strong> &nbsp;|&nbsp; Total so far: <strong>EUR 49.99</strong></div>
+    <div class="slot-notes">Updates in real time as selections are made. The word "extras" rather than "add-ons" or "ancillaries" was chosen because passengers use the word "extras" in reviews and complaints. The price bar never disappears. A passenger who scrolls down still sees the total pinned at the top.</div>
+  </div>
+
+  <h4>Seat Selection: Option Labels and Descriptions</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Seat Selection -- Option 1 (free, default)</div>
+    <div class="slot-content"><strong>No seat selection (included)</strong><br>We will assign you a seat when you check in, at no extra cost. If you are travelling with others on the same booking, we will try to seat you together, but we cannot guarantee it.</div>
+    <div class="slot-notes">"Included" rather than "free" sets the expectation that the base fare covers this. The together-seating caveat is specific and honest: it tells the passenger what they risk without promising what cannot be guaranteed.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Seat Selection -- Option 2 (standard paid)</div>
+    <div class="slot-content"><strong>Choose your seat (EUR 4.99 per seat)</strong><br>Pick a standard seat now from the seat map. Window, aisle, or middle. You can select seats for everyone on your booking.</div>
+    <div class="slot-notes">"Choose your seat" is the passenger's phrase, not the airline's. The price is in the headline, not hidden in the body. The seat map is mentioned to signal that the passenger will see and pick, not be assigned.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Seat Selection -- Option 3 (extra legroom)</div>
+    <div class="slot-content"><strong>Extra legroom seat (EUR 12.99 per seat)</strong><br>Seats in rows 1 to 5 and the emergency exit rows. More space to stretch your legs. Available on a first-come, first-served basis.</div>
+    <div class="slot-notes">"More space to stretch your legs" is the benefit in passenger language. "First-come, first-served" is honest scarcity: the seats are genuinely limited. If the flight has no extra-legroom seats available, this option is hidden or greyed out with "Sold out for this flight."</div>
+  </div>
+
+  <h4>Seat Selection: Continue Button</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Continue Button Label (post seat selection)</div>
+    <div class="slot-content">Continue to baggage</div>
+    <div class="slot-notes">Names the next step, does not imply the current step was required. The button is the same visual weight whether the passenger selected a seat or not. Never "Complete your booking" or "Save on your seat."</div>
+  </div>
+
+  <h4>Baggage: Option Labels</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Baggage -- Option 1 (free, default)</div>
+    <div class="slot-content"><strong>Hand luggage only (included)</strong><br>One small bag that fits under the seat in front of you. Maximum size: 40 x 25 x 20 cm. No weight limit within reason.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Baggage -- Option 2 (15kg checked)</div>
+    <div class="slot-content"><strong>15 kg checked bag (EUR X.XX)</strong><br>One bag up to 15 kg. Drop it at the bag-drop desk before security. Collect it at the baggage carousel when you land.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Baggage -- Option 3 (23kg checked)</div>
+    <div class="slot-content"><strong>23 kg checked bag (EUR Y.YY)</strong><br>One bag up to 23 kg. Same process: drop before security, collect on arrival. If 15 kg is enough, the option above costs less.</div>
+    <div class="slot-notes">The cross-reference ("If 15 kg is enough, the option above costs less") is an active benevolence signal: the airline is helping the passenger spend less, not more. This is a deliberate trust-building move.</div>
+  </div>
+
+  <h4>Priority Boarding: Option Labels and Decline Phrasing</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Priority Boarding -- Option 1 (free, default)</div>
+    <div class="slot-content"><strong>Standard boarding (included)</strong><br>Board with your group when it is called. Your group number will be on your boarding pass.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Priority Boarding -- Option 2 (paid) + Decline Phrasing</div>
+    <div class="slot-content"><strong>Priority boarding (EUR X.XX per person)</strong><br>Board first, before general boarding is called. Get settled sooner. Your cabin bag is guaranteed to go in the overhead locker above you.<br><br><em>[If passenger declines, the continue button reads:]</em><br><strong>Continue to meals -- standard boarding is fine</strong></div>
+    <div class="slot-notes">The decline phrasing "standard boarding is fine" is dignified. It affirms the passenger's choice rather than shaming it. Contrast with the dark-pattern alternative: "No, I'll risk losing my overhead space."</div>
+  </div>
+
+  <h4>Meals: Option Labels</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Meals -- Option 1 (free, default)</div>
+    <div class="slot-content"><strong>No meal pre-order (included)</strong><br>You can bring your own food on board, or buy snacks and drinks from our in-flight menu during the flight.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Meals -- Option 2 (pre-order)</div>
+    <div class="slot-content"><strong>Pre-order a meal (EUR X.XX)</strong><br>Choose from our menu now and your meal will be served to you during the flight. <a>See the menu</a>. Pre-orders close 24 hours before departure.</div>
+    <div class="slot-notes">"Pre-orders close 24 hours before departure" is real scarcity: the deadline is real. The menu link is prominent so the passenger knows what they are buying. No fake urgency. No "Only X meals remaining."</div>
+  </div>
+
+  <hr>
+
+  <!-- DESIGN 2 COPY -->
+  <h3>Design 2: Loyalty Dashboard Copy</h3>
+
+  <h4>Card 1: Earned</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Card 1 -- Summary View</div>
+    <div class="slot-content"><strong>You have earned</strong><br>2,450 points</div>
+    <div class="slot-notes">"You have earned" rather than "Your balance" or "Points available." The verb "earned" reinforces the value exchange: the passenger did something, the airline recognised it. This is a subtle benevolence signal.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Card 1 -- Earning-Rate Explanation (expanded view)</div>
+    <div class="slot-content">You earn 1 point for every EUR 1 you spend on flights with us. Points are added to your account within 48 hours after your flight lands.</div>
+    <div class="slot-notes">Specific and disprovable. A passenger who spends EUR 50 on a flight and checks their account 48 hours later should see exactly 50 points (or be able to report a discrepancy). The 48-hour window sets a clear expectation.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Card 1 -- Recent Activity Description (expanded view)</div>
+    <div class="slot-content"><strong>Recent activity</strong><br>12 Jun: Dublin to London -- earned 49 points<br>05 Jun: London to Dublin -- earned 44 points<br>28 May: Barcelona to Dublin -- earned 67 points</div>
+    <div class="slot-notes">Simple line-item format: date, route, points earned. No codes, no statuses, no jargon. The passenger can verify each line against their own travel history.</div>
+  </div>
+
+  <h4>Card 2: Expiring</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Card 2 -- Summary View (points expiring within 90 days)</div>
+    <div class="slot-content"><strong>Expiring soon</strong><br>450 of your points expire on 15 August 2026. <a>See how to use them</a></div>
+    <div class="slot-notes">"Expiring soon" is a real prompt (Fogg) at a real consequence. The link goes to the redemption catalogue. If no points are expiring within 90 days, the card shows: "None of your points are expiring in the next 3 months." No manufactured urgency.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Card 2 -- Expiry Policy (expanded view)</div>
+    <div class="slot-content">Points expire 24 months after the month you earned them. For example, points earned in June 2024 will expire at the end of June 2026. We will send you an email 30 days before any of your points expire.</div>
+    <div class="slot-notes">The example makes the policy concrete. The notification promise is specific and disprovable: if a passenger does not receive the email, the airline has broken a commitment (integrity failure). The notification must work for this sentence to be true.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Card 2 -- Notification Settings Toggle Label</div>
+    <div class="slot-content"><strong>Expiry reminders</strong><br>Email me 30 days before my points expire</div>
+    <div class="slot-notes">Default ON. The label is a first-person commitment from the passenger's perspective, which makes the toggle feel like a preference rather than a consent extraction. "Email me" is the passenger's voice.</div>
+  </div>
+
+  <h4>Card 3: Next Tier</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Card 3 -- Summary View (progress bar)</div>
+    <div class="slot-content"><strong>Your progress to Silver</strong><br>2,450 of 10,000 points earned. Reach Silver by 31 December 2026.</div>
+    <div class="slot-notes">Naming the tier and the deadline gives the passenger both the target and the timeframe. The progress bar visually fills from 0 to 10,000 with 2,450 marked. If the passenger has already reached the tier, the card shows: "You are Silver. 1,200 points to Gold."</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Card 3 -- Tier Names and Benefit Descriptions (expanded view)</div>
+    <div class="slot-content">
+      <strong>Blue</strong> (entry level) -- Earn 1 point per EUR 1 spent. Access to member-only fare sales.<br>
+      <strong>Silver</strong> (10,000 points in a calendar year) -- All Blue benefits, plus: free standard seat selection on every booking, priority check-in at selected airports, 10% more points on every flight.<br>
+      <strong>Gold</strong> (25,000 points in a calendar year) -- All Silver benefits, plus: free extra-legroom seat selection on every booking, priority boarding on every flight, dedicated Gold-member phone line, 25% more points on every flight.
+    </div>
+    <div class="slot-notes">Tier names and thresholds are placeholders derived from industry norms. The actual tier structure must be verified against CloudNine's programme. These descriptions are specific and comparable: the passenger can see exactly what changes at each tier. No vague promises like "enhanced benefits" or "priority service."</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Card 3 -- Earning Tips (expanded view)</div>
+    <div class="slot-content">To reach Silver by 31 December, you would need to earn about 1,260 points per month from now. That is roughly two return flights to London or one return flight to Barcelona each month.</div>
+    <div class="slot-notes">Specific, actionable, realistic. The passenger can look at the tip and assess whether it is achievable. If it is not, the honest framing prevents false hope. If the passenger is far from the next tier with little time remaining, the tip says: "You would need about X points by 31 December. That may be a stretch. Points you earn this year also count toward next year's Silver qualification, so you will have a head start."</div>
+  </div>
+
+  <h4>Expiry Notification Email</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Expiry Notification Email -- Subject Line</div>
+    <div class="slot-content">450 of your CloudNine points expire on 15 August</div>
+    <div class="slot-notes">The subject is the news. No "Don't miss out!" or "Urgent:" or exclamation marks. The passenger knows from the subject line exactly what is happening and when. If they read nothing else, they have the critical information.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Expiry Notification Email -- Body</div>
+    <div class="slot-content">
+      Hi [Name],<br><br>
+      450 of your CloudNine Rewards points will expire on 15 August 2026. That is 30 days from now.<br><br>
+      You can use your points to reduce the cost of a flight, or to book a flight using points only. 450 points is worth about EUR 4.50 toward your next booking.<br><br>
+      <strong>[Redeem your points]</strong> (button linking to redemption catalogue)<br><br>
+      If you do not want these reminders, you can turn them off in your <a>account settings</a>.<br><br>
+      The CloudNine Rewards team
+    </div>
+    <div class="slot-notes">The email does four things: states the news, states the consequence, provides a one-click action, and gives the passenger control (opt-out link). The tone is helpful, not threatening. The EUR 4.50 equivalent value is specific to this passenger's actual point balance and redemption rate. No fake urgency: the date is real and the 30-day window is real. The sentence about opting out is a dignity-preserving move: the passenger is not trapped in the notification stream.</div>
+  </div>
+
+  <h4>Join Flow: Non-Member Screen</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Join Flow -- What You Get (one sentence)</div>
+    <div class="slot-content">Join CloudNine Rewards and earn 1 point for every EUR 1 you spend on flights. Use your points to reduce the cost of future bookings.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Join Flow -- How Points Work (one sentence)</div>
+    <div class="slot-content">Points are added to your account within 48 hours of your flight landing, and they expire 24 months after you earn them.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Join Flow -- What Data Is Used (one sentence with privacy link)</div>
+    <div class="slot-content">We use your booking history to show you relevant offers and track your points. <a>Read how we handle your data</a>.</div>
+    <div class="slot-notes">Three sentences. The entire join proposition. No bullet-point list of 14 benefits with asterisks. No pre-ticked newsletter checkbox. The privacy link is genuine: the linked page must actually explain data use in plain language. If it currently does not, the Communicator inherits that gap.</div>
+  </div>
+
+  <hr>
+
+  <!-- DESIGN 3 COPY -->
+  <h3>Design 3: AI Disclosure Copy</h3>
+
+  <h4>Chatbot Greeting (Turn 1)</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Chatbot Greeting -- Full Turn 1 Message (4 elements)</div>
+    <div class="slot-content">
+      Hi there. I am CloudNine's automated assistant. I can help with bookings, baggage, check-in, and flight changes.<br><br>
+      If I am not sure about something, I will tell you rather than guess. You can ask to speak to a person at any time, and I will transfer you.<br><br>
+      What can I help with?
+    </div>
+    <div class="slot-notes">Four elements in three sentences: (1) Self-identification: "I am CloudNine's automated assistant." (2) Capability: "I can help with bookings, baggage, check-in, and flight changes." The list is specific so the passenger knows the bot's scope. (3) Limits + escalation: "If I am not sure...I will tell you...you can ask to speak to a person at any time." This is the calibration move (show uncertainty) applied to language. (4) The chat opens with a question, not a list of menu options. The voice is plain and warm, not robotic and not overly casual. The word "automated" rather than "AI" or "virtual" was chosen because it is the most commonly understood term among a broad passenger base.</div>
+  </div>
+
+  <h4>Chatbot Escalation</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Escalation Button Label</div>
+    <div class="slot-content">Speak to a person</div>
+    <div class="slot-notes">"Speak to a person" not "Talk to an agent" or "Escalate to human support." The word "person" is the clearest signal that the current interaction is with a non-person. "Agent" is ambiguous in a context where the chatbot itself is described as an assistant.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Transfer Confirmation Message</div>
+    <div class="slot-content">I am transferring you to a person on our customer team. The estimated wait is about [X] minutes. You will not lose anything we have discussed so far.</div>
+    <div class="slot-notes">Wait time is displayed. The assurance about not losing context reduces the anxiety that prevents passengers from escalating. If the wait time cannot be estimated, the message says: "I am transferring you to a person on our customer team. They will see this conversation when they join."</div>
+  </div>
+
+  <h4>Pricing Disclosure</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Pricing Disclosure -- Collapsed State (one line, always visible)</div>
+    <div class="slot-content">This price is set by an automated system. <a>How it works</a></div>
+    <div class="slot-notes">"Automated system" is consistent with the chatbot's "automated assistant." The link is small, unobtrusive, but always present. The passenger who does not care does not click. The passenger who wants to know can find out in one click.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Pricing Disclosure -- Expanded Panel (three factors)</div>
+    <div class="slot-content">
+      Your price is based on three things:<br><br>
+      <strong>1. Route and travel dates.</strong> Popular routes and busy dates like Fridays, Sundays, and holidays usually cost more.<br>
+      <strong>2. How far ahead you book.</strong> Booking earlier often costs less, but not always. Last-minute seats can be cheaper if the flight has space to fill.<br>
+      <strong>3. Current demand.</strong> As seats on a flight sell, the remaining seats may cost more. This can change while you are searching.<br><br>
+      <a>Read our full pricing policy</a>.
+    </div>
+    <div class="slot-notes">Three factors, each in one plain sentence. The factors are chosen based on what passengers actually ask about ("Why is this flight more expensive than last week?"). The second factor includes an honest caveat ("but not always") to prevent the over-trust problem where passengers believe booking early always guarantees the lowest price. The third factor includes the dynamic-change warning ("This can change while you are searching") which is the specific trust breach the Researcher identified. Naming it explicitly turns a hidden practice into a disclosed one.</div>
+  </div>
+
+  <h4>Personalisation Disclosure</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Personalisation Label (on every personalised offer)</div>
+    <div class="slot-content">Suggested for you based on your previous bookings</div>
+    <div class="slot-notes">"Suggested for you" rather than "Recommended" or "Because you booked." The phrase "based on your previous bookings" is specific and honest: it names the data source. If personalisation uses more factors (browsing behaviour, location, loyalty tier), the label says: "Suggested for you based on your bookings and recent searches." The label never claims less than the system uses.</div>
+  </div>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: Opt-Out Toggle Language</div>
+    <div class="slot-content">
+      <strong>Personalised suggestions</strong><br>
+      We use your booking history to suggest flights and extras you might like. You can turn this off at any time. Your bookings and points are not affected.<br><br>
+      <em>[Toggle ON/OFF]</em><br><br>
+      <em>[When toggled OFF:]</em> Personalised suggestions are off. You will still see offers, but they will be the same ones everyone sees.
+    </div>
+    <div class="slot-notes">The toggle language does three things: explains the mechanism, gives control, and reassures about consequences ("Your bookings and points are not affected"). The OFF-state confirmation tells the passenger what to expect: not a blank screen, just non-personalised offers. No dark-pattern attempt to guilt the passenger into leaving it on.</div>
+  </div>
+
+  <h4>Full AI Disclosure Statement Page</h4>
+  <div class="copy-slot">
+    <div class="slot-label">Slot: AI Disclosure Statement -- Full Page (4 elements)</div>
+    <div class="slot-content">
+      <strong>How CloudNine uses automated systems</strong><br><br>
+
+      <strong>1. What we use and when it was last updated</strong><br>
+      We use automated systems for three things you may encounter: our customer-support chat (powered by [VENDOR/MODEL NAME], last updated [DATE]), our flight pricing (an automated pricing engine, last reviewed [DATE]), and personalised flight and extras suggestions (a recommendation system, last trained [DATE]). This page was last updated on [DATE].<br><br>
+
+      <strong>2. Who checks the systems</strong><br>
+      Our customer team reviews chat conversations that are flagged for escalation. Our pricing models are reviewed every three months by our revenue management team. Our recommendation system is checked for fairness every six months. A human being makes the final decision on any refund, compensation, or complaint.<br><br>
+
+      <strong>3. What the systems do and what people do</strong><br>
+      Our chat assistant answers common questions about bookings, baggage, and check-in. If it cannot help, a person on our customer team takes over. Our pricing engine sets fares based on route, timing, and demand. People on our revenue team set the rules the engine follows. Our recommendation system suggests flights and extras you might like. You can turn this off in your <a>account settings</a>. People do not review individual recommendations unless you ask us to.<br><br>
+
+      <strong>4. How to check this is true</strong><br>
+      You can see your chat history in your account. You can ask a person on our customer team to explain a pricing decision. If something on this page does not match your experience, tell us at [EMAIL] or through the chat. We update this page whenever our systems change.
+    </div>
+    <div class="slot-notes">The four-element structure follows the Week 3 V4 disclosure pattern. Square-bracketed values ([VENDOR/MODEL NAME], [DATE], [EMAIL]) must be filled with CloudNine's actual data before publication. This page must live at a publicly accessible URL linked from the website footer. The tone is institutional but plain: the airline is making commitments, and those commitments must be keepable. Every sentence is disprovable. If the pricing engine uses more than three factors, the disclosure must name them. If the review cycle is different from what is stated, the disclosure must match reality. A disclosure that is aspirational rather than accurate is an integrity failure.</div>
+  </div>
+</section>
+
+<!-- ===== AI DISCLOSURE ===== -->
+<section>
+  <div class="ai-disclosure-box">
+    <h4>About This Report</h4>
+    <p>This report was produced by the CloudNine Communications Agent, an AI colleague designed for trust and transparency communications at CloudNine Airlines. It was generated on 24 June 2026 using the DeepSeek V4 Pro large language model.</p>
+    <p><strong>What the AI did:</strong> The Communications Agent filled all COMMUNICATOR COPY slots specified in the Designer's HO-02 handoff, structured the business-leadership framing (Executive Summary, Recommendations, Options Not Pursued, Implementation Roadmap), and applied the five quality standards (true, disprovable, useful, read-aloud survivable, no dark patterns in language) to every piece of copy.</p>
+    <p><strong>What the AI did not do:</strong> The Communications Agent did not access CloudNine's actual systems, customer data, pricing algorithms, chatbot logs, or loyalty programme backend. All recommendations are based on the Researcher's Trust Landscape Audit (HO-01) and the Designer's Trust Intervention Specifications (HO-02), which are themselves based on the strategic diagnosis in the Task 1 document, not on direct inspection of CloudNine's operations.</p>
+    <p><strong>Human oversight:</strong> A human reviewer (the student acting as Manager in this pipeline) retains full editorial responsibility. Every copy element should be verified against CloudNine's actual systems, policies, and customer vocabulary before publication.</p>
+    <p><strong>Verification path:</strong> The source documents (HO-01 and HO-02) are available in the project repository at <a href="https://github.com/danmkelly/CustEngageCA1">github.com/danmkelly/CustEngageCA1</a>. Each reference to CloudNine's actual operations that could not be verified is marked in the Reflections document (Reflections-Communicator.html).</p>
+  </div>
+</section>
+
+<!-- ===== ASSUMPTIONS ===== -->
+<section>
+  <h2>Assumptions and Unverified Claims</h2>
+  <p>The following elements in this report depend on data or system details that were not available to verify during production. Each should be checked against CloudNine's actual operations before any copy is published:</p>
+
+  <table>
+    <thead><tr><th>#</th><th>Assumption</th><th>Where Used</th><th>Risk If Wrong</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Loyalty points are earned at 1 point per EUR 1 spent on flights.</td><td>Loyalty Dashboard Card 1, Join Flow</td><td>If the actual rate is different (e.g. tiered earning, promotional rates, exclusions on certain fare classes), the copy makes a false claim. Integrity failure.</td></tr>
+      <tr><td>2</td><td>Points expire 24 months after the month of earning.</td><td>Loyalty Dashboard Card 2, Join Flow, Expiry Notification Email</td><td>If the actual expiry policy is different (shorter window, different trigger, no expiry), the copy creates false urgency or false reassurance. Both are trust failures.</td></tr>
+      <tr><td>3</td><td>The loyalty programme has three tiers named Blue, Silver, Gold with thresholds at 0, 10,000, and 25,000 points.</td><td>Loyalty Dashboard Card 3</td><td>If the tier structure, names, or thresholds are different, the copy is factually wrong. If CloudNine has no tiers (points-only programme), the entire Card 3 concept needs redesign.</td></tr>
+      <tr><td>4</td><td>The chatbot is an automated system that can be disclosed as such and supports human escalation.</td><td>Chatbot Greeting, Escalation Button</td><td>If the chatbot is a third-party vendor with hardcoded greetings or no escalation API, the Turn 1 disclosure and transfer button may not be implementable without vendor cooperation or replacement.</td></tr>
+      <tr><td>5</td><td>Pricing is determined by three factors: route and dates, booking lead time, and current demand.</td><td>Pricing Disclosure Panel</td><td>If CloudNine's pricing engine uses additional or different factors (e.g. customer loyalty tier, device type, browsing history, competitor scraping), the three-factor explanation is incomplete. An incomplete disclosure is an integrity failure.</td></tr>
+      <tr><td>6</td><td>Personalised recommendations are based on booking history.</td><td>Personalisation Label</td><td>If personalisation uses additional data sources (browsing behaviour, location, demographic data), the label must name them. "Based on your previous bookings" would be incomplete and misleading.</td></tr>
+      <tr><td>7</td><td>CloudNine can serve real-time point balances, transaction histories, expiry dates, and tier progress.</td><td>Entire Loyalty Dashboard</td><td>If the loyalty backend cannot support real-time queries, the dashboard will show stale data. The copy's promise of accurate, live information would be broken every time the data lags.</td></tr>
+      <tr><td>8</td><td>The ancillary flow currently contains the dark patterns named in the Researcher's HO-01 (preselection, hidden costs, trick wording, confirmshaming, visual interference).</td><td>Entire Ancillary Flow Copy</td><td>If the actual flow is cleaner than assumed, the copy may be solving for problems that do not exist. The tone and framing would still be appropriate (transparent language is always better), but the specific design decisions might need recalibration.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="concern-box">
+    <div class="concern-label">Critical Path Dependency</div>
+    <p>Assumptions 1 through 4 are <strong>critical path</strong>: if any of them is wrong, significant sections of the recommended copy must be rewritten before publication. The screen-level audit proposed in Phase 1 of the Implementation Roadmap should verify these four assumptions as its highest priority.</p>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
